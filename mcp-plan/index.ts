@@ -15,6 +15,8 @@ import {
 // Tool implementations
 import { generateProjectPlan } from "./src/tools/planning/generateProjectPlan.js";
 import { setupGitHubProject } from "./src/tools/github/setupGitHubProject.js";
+import { trackProgress } from "./src/tools/github/trackProgress.js";
+import { syncWithGitHub } from "./src/tools/github/syncWithGitHub.js";
 
 const server = new Server(
   {
@@ -456,27 +458,23 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "syncWithGitHub":
+      const syncResult = await syncWithGitHub(args);
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify({
-              message: "syncWithGitHub tool - implementation pending",
-              params: args,
-            }, null, 2),
+            text: JSON.stringify(syncResult, null, 2),
           },
         ],
       };
 
     case "trackProgress":
+      const progressResult = await trackProgress(args);
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify({
-              message: "trackProgress tool - implementation pending",
-              params: args,
-            }, null, 2),
+            text: JSON.stringify(progressResult, null, 2),
           },
         ],
       };
