@@ -311,6 +311,13 @@ Use `syncWithGitHub` tool to sync local and GitHub state
 
 See [archive/MIGRATION.md](archive/MIGRATION.md) for migrating from slash commands.
 
+## Documentation
+
+- **API Reference**: [API_REFERENCE.md](API_REFERENCE.md) - Complete tool documentation
+- **Examples**: [EXAMPLES.md](EXAMPLES.md) - Usage examples and workflows
+- **Configuration**: [CONFIGURATION.md](CONFIGURATION.md) - Setup guide
+- **Troubleshooting**: [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Problem solving
+
 ## Support
 
 - **GitHub Issues**: https://github.com/hmesfin/pm-mcp/issues
