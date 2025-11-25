@@ -19,6 +19,8 @@ import { critiquePlan } from "./src/tools/planning/critiquePlan.js";
 import { setupGitHubProject } from "./src/tools/github/setupGitHubProject.js";
 import { trackProgress } from "./src/tools/github/trackProgress.js";
 import { syncWithGitHub } from "./src/tools/github/syncWithGitHub.js";
+import { reviewArchitecture } from "./src/tools/intelligence/reviewArchitecture.js";
+import { estimateEffort } from "./src/tools/intelligence/estimateEffort.js";
 
 const server = new Server(
   {
@@ -504,27 +506,23 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "reviewArchitecture":
+      const archResult = await reviewArchitecture(args);
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify({
-              message: "reviewArchitecture tool - implementation pending",
-              params: args,
-            }, null, 2),
+            text: JSON.stringify(archResult, null, 2),
           },
         ],
       };
 
     case "estimateEffort":
+      const effortResult = await estimateEffort(args);
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify({
-              message: "estimateEffort tool - implementation pending",
-              params: args,
-            }, null, 2),
+            text: JSON.stringify(effortResult, null, 2),
           },
         ],
       };
