@@ -22,6 +22,9 @@ import { syncWithGitHub } from "./src/tools/github/syncWithGitHub.js";
 import { reviewArchitecture } from "./src/tools/intelligence/reviewArchitecture.js";
 import { estimateEffort } from "./src/tools/intelligence/estimateEffort.js";
 
+// Resource implementations
+import { listResources, readResource } from "./src/resources/index.js";
+
 const server = new Server(
   {
     name: "project-planner",
@@ -537,49 +540,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 // ============================================================================
 
 server.setRequestHandler(ListResourcesRequestSchema, async () => {
-  return {
-    resources: [
-      {
-        uri: "project://list",
-        name: "All Projects",
-        description: "List all projects tracked by the planner",
-        mimeType: "application/json",
-      },
-      {
-        uri: "template://list",
-        name: "Available Templates",
-        description: "List all available project templates",
-        mimeType: "application/json",
-      },
-      {
-        uri: "pattern://list",
-        name: "Best Practices Patterns",
-        description: "List all recognized patterns and best practices",
-        mimeType: "application/json",
-      },
-      {
-        uri: "metrics://all",
-        name: "Historical Metrics",
-        description: "Aggregated metrics from all past projects",
-        mimeType: "application/json",
-      },
-    ],
-  };
+  const resources = await listResources();
+  return { resources };
 });
 
 server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const { uri } = request.params;
-
-  // Resource handler implementations will go here
+  const result = await readResource(uri);
   return {
     contents: [
       {
-        uri,
-        mimeType: "application/json",
-        text: JSON.stringify({
-          message: "Resource handler - implementation pending",
-          uri,
-        }, null, 2),
+        uri: result.uri,
+        mimeType: result.mimeType,
+        text: result.text,
       },
     ],
   };
