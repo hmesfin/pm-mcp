@@ -1,400 +1,370 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working in this repository.
 
 ## Project Overview
 
-This is a **Claude Code configuration directory** (`.claude/`) for the fullstack-starter-djvurn template. It provides an AI-driven planning and execution system that transforms app ideas into comprehensive, TDD-driven, session-based implementation plans.
+This is the **Project Planner MCP Server** - an MCP (Model Context Protocol) server that transforms app ideas into comprehensive, TDD-driven, session-based implementation plans with GitHub integration.
 
 **Philosophy**: Planning is the bottleneck, not coding. Poor planning leads to project failure. Good plans enable successful agent execution.
 
-## Core Architecture
+## Current State
 
-### Planning System Components
+### ✅ Implemented (Sessions 1-2 Complete)
+- **generateProjectPlan** tool - Generates PROJECT_PLAN.md from REQUIREMENTS.md
+- **setupGitHubProject** tool - Creates GitHub issues, milestones, labels
+- **planParser** service - Parses PROJECT_PLAN.md into structured data
+- TypeScript type system - Complete types for all tools and resources
+- GitHub integration - Full issue creation with TDD workflows
 
-1. **Slash Commands** (`.claude/commands/`)
-   - `/plan-app` - Interactive AI-driven app planning with template selection
-   - `/initialize-project` - Initialize execution state for a project plan
-   - `/execute-session` - Execute individual sessions with TDD enforcement
-   - `/execute-phase` - Execute entire phases with parallelization
-   - `/resume-session` - Resume interrupted sessions from checkpoints
-   - `/show-progress` - Display project execution progress
+### 🚧 Next Up (Session 7)
+- **trackProgress** tool - Query GitHub for progress metrics
+  - Issue: https://github.com/hmesfin/pm-mcp/issues/8
+  - Estimate: 3-4 hours
+  - Dependencies: generateProjectPlan, setupGitHubProject (both complete)
 
-2. **Template Library** (`.claude/templates/`)
-   - `PROJECT_PLAN_TEMPLATE.md` - High-level plan structure
-   - `PHASE_TASKS_TEMPLATE.md` - Detailed session task breakdowns
-   - Pre-built templates: blog, ecommerce, saas, social, projectmanagement
+### 📋 Remaining (Sessions 8-15)
+See: https://github.com/hmesfin/pm-mcp/milestones
 
-3. **Executor Agents** (`.claude/agents/`)
-   - `backend-builder.md` - Django models, serializers, ViewSets
-   - `frontend-builder.md` - Vue components, composables, views
-   - `mobile-builder.md` - React Native screens, navigation
-   - `e2e-tester.md` - Playwright E2E workflows
+## Architecture
 
-4. **Infrastructure** (`.claude/infrastructure/`)
-   - `checkpoint-manager.ts` - Human-in-the-loop checkpoint system
-   - `agent-state-schema.md` - Session state tracking schema
+### Directory Structure
 
-## Template Variable System
+```
+project-planner-mcp/
+├── mcp-plan/                    # MCP server implementation
+│   ├── src/
+│   │   ├── tools/              # MCP tool implementations
+│   │   │   ├── planning/       # generateProjectPlan, analyzeRequirements, critiquePlan
+│   │   │   ├── github/         # setupGitHubProject, trackProgress, syncWithGitHub
+│   │   │   └── intelligence/   # reviewArchitecture, estimateEffort
+│   │   ├── services/           # Business logic
+│   │   │   └── planParser.ts   # Parse PROJECT_PLAN.md
+│   │   └── types/              # TypeScript type definitions
+│   │       ├── common.ts       # Shared types
+│   │       ├── tools.ts        # Tool parameter/return types
+│   │       ├── resources.ts    # Resource types
+│   │       └── prompts.ts      # Prompt types
+│   ├── index.ts                # MCP server entry point
+│   ├── REQUIREMENTS.md         # Complete MCP specification
+│   └── package.json
+├── project-plans/               # Generated plans (output)
+│   └── mcp-server/             # Dogfooding: MCP planning itself
+│       ├── PROJECT_PLAN.md     # 15 sessions, 5 phases
+│       ├── REQUIREMENTS.md     # MCP requirements
+│       └── .agent-state.json   # State tracking
+├── templates/                   # Plan generation templates
+│   ├── blog/, ecommerce/, saas/, social/, projectmanagement/
+│   ├── PROJECT_PLAN_TEMPLATE.md
+│   └── PHASE_TASKS_TEMPLATE.md
+└── docs/                        # Documentation
+    ├── PLANNING_GUIDE.md       # User guide
+    └── archive/                # Old slash command implementation
 
-Templates use `{{VARIABLE}}` syntax for placeholders. Common variables:
-
-- `{{APP_NAME}}` - Application name
-- `{{APP_DESCRIPTION}}` - Brief description
-- `{{COMPLEXITY_LEVEL}}` - Basic/Intermediate/Advanced
-- `{{MOBILE_STACK}}` - React Native + Expo or "Not applicable"
-- `{{CORE_FEATURES}}` - Bulleted list of features
-- `{{INTEGRATIONS}}` - Third-party services
-- `{{PHASE_X_SESSIONS}}` - Session breakdown for phase X
-- `{{PHASE_X_TIME}}` - Estimated time for phase X
-
-## Session Organization Patterns
-
-### Context Budget Management
-
-Sessions are sized to avoid context fatigue:
-- **Basic apps**: ~15K tokens/session
-- **Intermediate apps**: ~18K tokens/session
-- **Advanced apps**: ~20K tokens/session
-
-Target: Leave 30K+ tokens buffer for conversation and debugging.
-
-### Backend Session Sizing
-
-- **Models**: 3-5 models per session
-- **Serializers**: 3-5 serializers per session
-- **ViewSets**: 3-5 ViewSets per session
-- **Business logic**: 1-2 complex workflows per session
-
-### Frontend Session Sizing
-
-- **Components**: 5-7 components per session
-- **Views**: 3-4 views per session
-- **Composables**: 3-5 composables per session
-- **Stores**: 2-3 stores per session
-
-### Mobile Session Sizing
-
-- **Screens**: 3-4 screens per session
-- **Components**: 5-7 components per session
-- **Hooks**: 3-5 hooks per session
-
-## TDD Enforcement
-
-Every session follows the RED-GREEN-REFACTOR cycle:
-
-1. **RED Phase**: Write failing tests first
-   - Expected result: ❌ Tests fail (implementation doesn't exist)
-   - Checkpoint: Show failing tests, ask permission to implement
-
-2. **GREEN Phase**: Write minimal code to pass tests
-   - Expected result: ✅ Tests pass
-   - Checkpoint: Show passing tests, ask permission to refactor
-
-3. **REFACTOR Phase**: Optimize while keeping tests passing
-   - Expected result: ✅ Tests still pass after refactoring
-   - Checkpoint: Show improvements, ask permission to commit
-
-4. **COMMIT Phase**: Create git commit with session summary
-
-## Checkpoint System
-
-Agents pause at 5 checkpoints per session for human approval:
-
-1. **BEFORE_START** - Show what will be built, ask permission
-2. **AFTER_RED** - Show failing tests, ask permission to implement
-3. **AFTER_GREEN** - Show passing tests, ask permission to refactor
-4. **AFTER_REFACTOR** - Show improvements, ask permission to commit
-5. **SESSION_COMPLETE** - Show summary, ask to continue or pause
-
-User responses:
-- ✅ **Approve** - Continue to next step
-- 🔄 **Request Changes** - Agent adjusts, shows again
-- ⏸️ **Pause** - Stop execution, save state
-- ❌ **Abort** - Rollback changes
-
-## State Management
-
-### Session States
-
-- `not_started` - Session hasn't begun
-- `in_progress` - Currently working
-- `red_phase` - Tests written, failing
-- `green_phase` - Implementation done, tests passing
-- `refactor_phase` - Refactoring in progress
-- `awaiting_approval` - At checkpoint
-- `completed` - Session finished
-- `blocked` - Can't proceed (dependency issue)
-- `skipped` - User chose to skip
-
-### State Persistence
-
-State tracked in `project-plans/<app-name>/.agent-state.json`:
-
-```json
-{
-  "project_name": "my-blog",
-  "current_phase": 1,
-  "current_session": 2,
-  "completed_sessions": ["phase_1_session_1"],
-  "in_progress": "phase_1_session_2",
-  "status": "in_progress"
-}
 ```
 
-## Common Commands
+### MCP Tools (11 total)
 
-### Planning Workflow
+**Planning Tools:**
+- `conductDiscovery` - Interactive Q&A for requirements
+- `generateProjectPlan` - ✅ IMPLEMENTED - Generate plan from requirements
+- `analyzeRequirements` - Parse and validate REQUIREMENTS.md
+- `critiquePlan` - Review plan quality
+
+**GitHub Tools:**
+- `setupGitHubProject` - ✅ IMPLEMENTED - Create issues/milestones/labels
+- `trackProgress` - 🚧 NEXT - Query GitHub for metrics
+- `syncWithGitHub` - Sync local state with GitHub
+- `findNextSession` - Get next available session
+- `updateSessionStatus` - Mark sessions as started/completed
+
+**Intelligence Tools:**
+- `reviewArchitecture` - Technical feasibility analysis
+- `estimateEffort` - Time/complexity estimates
+
+## Development Workflow
+
+### TDD Methodology (Mandatory)
+
+Every session follows RED-GREEN-REFACTOR:
+
+1. **🔴 RED Phase**: Write failing tests FIRST
+   ```bash
+   npm run test  # Expected: ❌ Tests fail
+   ```
+
+2. **🟢 GREEN Phase**: Implement to pass tests
+   ```bash
+   npm run test         # Expected: ✅ Tests pass
+   npm run type-check   # Expected: ✅ No errors
+   ```
+
+3. **🔵 REFACTOR Phase**: Improve code quality
+   ```bash
+   npm run test  # Expected: ✅ Tests still pass
+   npm run lint  # Expected: ✅ No issues
+   ```
+
+4. **✅ COMMIT Phase**: Git commit after exit criteria met
+
+### Session Exit Criteria
+
+Before marking a session complete:
+- [ ] All tests passing (write tests for new tools)
+- [ ] Type checking passes (strict mode)
+- [ ] Linting passes
+- [ ] Code documented (JSDoc comments)
+- [ ] Git commit created
+- [ ] GitHub issue updated (if applicable)
+
+### Building the MCP
 
 ```bash
-# Create a new plan
-/plan-app
+# Development
+cd mcp-plan
+npm install
+npm run build        # TypeScript compilation
+npm run watch        # Watch mode for development
 
-# Initialize project for execution
-/initialize-project <project-name> <template-type>
+# Type checking
+npm run type-check   # Must pass before commits
 
-# Execute specific session
-/execute-session <project-name> <session-number>
-
-# Execute entire phase with parallelization
-/execute-phase <project-name> <phase-number>
-
-# Resume from interruption
-/resume-session <project-name>
-
-# Check progress
-/show-progress <project-name>
+# Testing (when test suite is built)
+npm run test         # Run all tests
 ```
 
-### Template Customization
+## Key Files
 
-Pre-built templates support feature toggles:
-- **Blog**: comments, categories/tags, multi-author, media uploads
-- **E-commerce**: product variants, inventory, subscriptions, reviews
-- **SaaS**: organizations, teams, billing, RBAC
-- **Social**: posts, friends, feeds, real-time, notifications
-- **Project Management**: projects, tasks, boards, time tracking
+### `mcp-plan/index.ts`
+MCP server entry point. Registers tools and handles requests.
 
-## Mobile Feature Selection
+**Structure:**
+```typescript
+// Tool registration
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return { tools: [...] };
+});
 
-When planning mobile apps, three approaches:
-
-1. **Web only** - No mobile planning
-2. **Full feature parity** - All web features → mobile
-3. **Selective features** (RECOMMENDED) - Choose which features go to mobile
-   - Reduces sessions by ~30-40%
-   - Avoids complex desktop UIs on mobile
-   - Adds mobile-specific features (push notifications, biometric auth, offline mode)
-4. **Mobile-first** - Mobile is primary, web is secondary
-
-## Target Stack Understanding
-
-The planning system generates plans for:
-
-### Backend (Django)
-- Custom user model: `apps.users.User` (email-based, no username)
-- API-only backend (no Django templates except emails)
-- DRF with OpenAPI schema generation (`drf-spectacular`)
-- Token + JWT authentication
-- Docker-first workflow (`docker compose run --rm django <command>`)
-
-### Frontend (Vue.js)
-- Vue 3 Composition API with `<script setup lang="ts">`
-- Shadcn-vue components (copy-paste, not npm package)
-- Auto-generated TypeScript client from Django OpenAPI schema
-- Zod validation schemas (mirror backend validation)
-- TanStack Query (vue-query) for data fetching
-
-### Mobile (React Native)
-- React Native + Expo or bare workflow
-- TypeScript strict mode
-- React Navigation for navigation
-- Platform-specific code: `.ios.tsx` / `.android.tsx`
-
-### Infrastructure
-- Docker Compose for all services
-- PostgreSQL database
-- Redis for caching and Celery broker
-- Celery for async tasks
-- Mailpit for local email testing
-
-## Agent Integration Architecture
-
-### Execution Flow
-
-1. User runs `/plan-app` → generates comprehensive plan
-2. User runs `/initialize-project` → creates `.agent-state.json`
-3. User runs `/execute-session` → agent executes one session with TDD
-4. Agent pauses at checkpoints → user approves/modifies
-5. Agent commits → updates state → moves to next session
-
-### Parallelization (Phase-Level Execution)
-
-When executing phases (`/execute-phase`), sessions are grouped by dependencies:
-- **Group 1**: Independent sessions run first
-- **Group 2**: Sessions depending on Group 1
-- **Group 3**: Sessions with satisfied dependencies run in parallel
-
-Time savings: 20-40% faster than sequential execution.
-
-## File Organization
-
-```
-.claude/
-├── README.md                           # User guide
-├── PLANNING_GUIDE.md                   # Planning system guide
-├── AGENT_INTEGRATION_ARCHITECTURE.md   # Agent execution design
-├── QUICKSTART_AGENT_EXECUTION.md       # Quick start for execution
-├── SKILL.md                            # Claude Code skill definition
-├── commands/
-│   ├── plan-app.md                     # Planning slash command
-│   ├── initialize-project.md           # Project initialization
-│   ├── execute-session.md              # Session executor
-│   ├── execute-phase.md                # Phase executor
-│   ├── resume-session.md               # Resume from checkpoint
-│   └── show-progress.md                # Progress tracker
-├── templates/
-│   ├── PROJECT_PLAN_TEMPLATE.md        # High-level plan
-│   ├── PHASE_TASKS_TEMPLATE.md         # Session tasks
-│   ├── blog/                           # Blog template
-│   ├── ecommerce/                      # E-commerce template
-│   ├── saas/                           # SaaS template
-│   ├── social/                         # Social network template
-│   └── projectmanagement/              # PM template
-├── agents/
-│   ├── backend-builder.md              # Django executor
-│   ├── frontend-builder.md             # Vue executor
-│   ├── mobile-builder.md               # React Native executor
-│   └── e2e-tester.md                   # Playwright executor
-├── infrastructure/
-│   ├── checkpoint-manager.ts           # Checkpoint system
-│   └── agent-state-schema.md           # State schema
-└── references/
-    └── PROJECT_STRUCTURE.md            # Reference docs
+// Tool execution
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  switch (name) {
+    case "generateProjectPlan":
+      return await generateProjectPlan(args);
+    case "setupGitHubProject":
+      return await setupGitHubProject(args);
+    // ... other tools
+  }
+});
 ```
 
-## Important Patterns
+### `mcp-plan/src/types/common.ts`
+Shared type definitions used across all tools.
 
-### Plan Parser Logic
+**Key types:**
+- `ComplexityLevel` - "basic" | "intermediate" | "advanced"
+- `ProjectType` - App category
+- `Session` - Session structure (title, objectives, estimates)
+- `Phase` - Phase structure (sessions, goals, time)
+- `ProjectPlan` - Complete plan structure
 
-Agents parse markdown plans into structured data:
-- Extract sessions from `## Session X:` headers
-- Parse TDD workflow from subsections (`### Step 1: Write Tests FIRST (RED)`)
-- Extract file lists from code blocks
-- Parse exit criteria from checklist items
+### `mcp-plan/src/services/planParser.ts`
+Parses PROJECT_PLAN.md into structured TypeScript objects.
 
-### Error Recovery
+**Used by:**
+- `setupGitHubProject` - Parse plan to create issues
+- `trackProgress` - Parse plan to calculate metrics
+- `analyzeRequirements` - Validate plan structure
 
-1. **Test failures in GREEN phase**: Agent auto-retries 2x, then asks for help
-2. **Dependency errors**: Agent identifies blockers, suggests fix or asks user
-3. **Merge conflicts**: Agent pauses, asks user to resolve manually
+### Templates
 
-### Commit Message Format
+**`templates/PROJECT_PLAN_TEMPLATE.md`**
+- High-level plan structure
+- Variables: `{{APP_NAME}}`, `{{PHASES}}`, etc.
 
+**`templates/PHASE_TASKS_TEMPLATE.md`**
+- Detailed session breakdowns
+- TDD workflow structure
+- Exit criteria
+
+## GitHub Integration
+
+### Labels (16 total)
+- **Phase**: `phase-1` to `phase-5`
+- **Domain**: `backend`, `frontend`, `mobile`, `e2e`, `infrastructure`
+- **TDD**: `red-phase`, `green-phase`, `refactor-phase`
+- **Status**: `in-progress`, `blocked`, `ready-for-review`
+
+### Issues
+One issue per session with:
+- 🎯 Objectives
+- 🔴 RED phase tasks (write tests)
+- 🟢 GREEN phase tasks (implement)
+- 🔵 REFACTOR phase tasks (optimize)
+- ✅ Exit criteria checklist
+- 📊 Metadata (estimates, dependencies)
+
+**Current GitHub Project:**
+- Repository: https://github.com/hmesfin/pm-mcp
+- 15 issues created (sessions 1-15)
+- 5 milestones (phases 1-5)
+
+## Dogfooding
+
+**This MCP was planned using itself!**
+
+1. Created `mcp-plan/REQUIREMENTS.md` manually
+2. Used `generateProjectPlan` to create `project-plans/mcp-server/PROJECT_PLAN.md`
+3. Used `setupGitHubProject` to create all GitHub issues
+4. Now following the plan to build the remaining tools
+
+**See:** `project-plans/mcp-server/` for the complete plan
+
+## Session Sizing
+
+Context budget management:
+- **Basic apps**: ~15K tokens/session (30K+ buffer)
+- **Intermediate apps**: ~18K tokens/session (30K+ buffer)
+- **Advanced apps**: ~20K tokens/session (30K+ buffer)
+
+**Backend sessions:**
+- 3-5 models, serializers, or ViewSets
+- 1-2 complex workflows
+
+**Frontend sessions:**
+- 5-7 components
+- 3-4 views
+- 3-5 composables
+
+## Common Patterns
+
+### Adding a New MCP Tool
+
+1. **Define types** in `src/types/tools.ts`:
+   ```typescript
+   export interface MyToolParams {
+     param1: string;
+     param2: number;
+   }
+
+   export interface MyToolResult {
+     success: boolean;
+     data: SomeType;
+   }
+   ```
+
+2. **Implement tool** in `src/tools/<category>/myTool.ts`:
+   ```typescript
+   export async function myTool(
+     params: MyToolParams
+   ): Promise<MyToolResult> {
+     // Implementation
+   }
+   ```
+
+3. **Register in index.ts**:
+   ```typescript
+   // In ListToolsRequestSchema handler
+   {
+     name: "myTool",
+     description: "...",
+     inputSchema: { /* Zod schema */ }
+   }
+
+   // In CallToolRequestSchema handler
+   case "myTool":
+     return await myTool(args);
+   ```
+
+4. **Write tests** (RED-GREEN-REFACTOR)
+
+5. **Update types** if needed
+
+6. **Document** in README.md
+
+### Using GitHub API
+
+Tools use Octokit REST API via environment variables:
+
+```typescript
+import { Octokit } from "@octokit/rest";
+
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN
+});
+
+// Example: List issues
+const { data: issues } = await octokit.issues.listForRepo({
+  owner: "username",
+  repo: "repo-name"
+});
 ```
-feat(<scope>): <title>
 
-Completed Session X: <session-title>
+**Token setup:**
+- User provides token in MCP config
+- Scopes needed: `repo` (all), `admin:org` (read:org)
 
-Phase: <phase-name>
-Tests: X/X passing
-Coverage: X%
-Time: Xh (estimated: Yh)
+### Parsing Plans
 
-Files modified:
-- path/to/file1
-- path/to/file2
+Use the `planParser` service:
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+```typescript
+import { parsePlan } from '../services/planParser.js';
+import fs from 'fs/promises';
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+const content = await fs.readFile(planPath, 'utf-8');
+const plan = parsePlan(content);
+
+// plan.phases[0].sessions[0].title
+// plan.totalSessions
+// plan.totalTime
 ```
 
-## Key Differences from Regular Development
+## Important Notes
 
-1. **Planning before coding** - Comprehensive requirements and task breakdown upfront
-2. **Session-based execution** - Work organized into 2-3 hour sessions
-3. **TDD enforcement** - Tests written FIRST, always
-4. **Human-in-the-loop** - Checkpoints at every major step
-5. **State tracking** - Resume from any point
-6. **Agent execution** - Automated implementation following plans
+### For New Sessions
 
-## Common Workflows
+When starting a new session:
+1. Check the GitHub issue for that session
+2. Read the objectives and dependencies
+3. Follow TDD strictly (RED-GREEN-REFACTOR)
+4. Update the issue when complete
+5. Commit with descriptive message
 
-### Create and Execute Plan
+### Before Committing
 
+Run these checks:
 ```bash
-# 1. Create plan interactively
-/plan-app
-
-# 2. Initialize project
-/initialize-project my-blog blog
-
-# 3. Execute sessions one by one
-/execute-session my-blog 1
-/execute-session my-blog 2
-...
-
-# OR execute entire phase
-/execute-phase my-blog 1
+npm run build        # Must succeed
+npm run type-check   # Must pass
+npm run test         # Must pass (when tests exist)
 ```
 
-### Resume After Interruption
+### Documentation
 
-```bash
-# Check where you left off
-/show-progress my-blog
+Keep these in sync:
+- `README.md` - User-facing documentation
+- `docs/PLANNING_GUIDE.md` - User guide
+- `CLAUDE.md` - This file (for Claude Code)
+- `mcp-plan/REQUIREMENTS.md` - Complete specification
 
-# Resume from last checkpoint
-/resume-session my-blog
-```
+## Migration Notes
 
-### Parallel Development
+This project was reorganized from a slash command system to an MCP server.
 
-```bash
-# Execute entire phase with parallelization
-/execute-phase my-blog 1
+**Old implementation:** `docs/archive/slash-commands/`
+**Migration guide:** `docs/archive/MIGRATION.md`
 
-# Agent will run independent sessions in parallel
-# Saves 20-40% time
-```
+The templates and plan structure remain the same, only the delivery mechanism changed (slash commands → MCP tools).
 
-## Troubleshooting
+## Resources
 
-### Plan too complex
-- Choose "Basic" complexity during `/plan-app`
-- Request fewer features
-- Split into multiple smaller apps
+- **Main README**: [README.md](README.md)
+- **User Guide**: [docs/PLANNING_GUIDE.md](docs/PLANNING_GUIDE.md)
+- **Requirements**: [mcp-plan/REQUIREMENTS.md](mcp-plan/REQUIREMENTS.md)
+- **GitHub Issues**: https://github.com/hmesfin/pm-mcp/issues
+- **Migration Guide**: [docs/archive/MIGRATION.md](docs/archive/MIGRATION.md)
 
-### Sessions too large
-- Edit generated `PHASE_X_*.md` files manually
-- Split sessions into smaller chunks
-- Reduce entities per session
+---
 
-### Context fatigue mid-session
-- Take breaks between sessions
-- Use `/resume-session` to pick up where you left off
-
-### Generated plan doesn't match vision
-- Edit `REQUIREMENTS.md` before starting execution
-- Customize template selections during `/plan-app`
-- Manually adjust session tasks in `PHASE_X_*.md` files
-
-## Best Practices
-
-1. **Review plans before execution** - Check `REQUIREMENTS.md` and `PROJECT_PLAN.md`
-2. **Approve at checkpoints** - Don't rush, review code at each checkpoint
-3. **Follow TDD strictly** - Trust the RED-GREEN-REFACTOR workflow
-4. **Commit after sessions** - Clean git history with meaningful commits
-5. **Use parallelization** - Run `/execute-phase` for faster execution
-6. **Track progress** - Use `/show-progress` frequently
-
-## Success Metrics
-
-A successful plan execution has:
-- ✅ All tests passing (>85% coverage backend, >85% frontend/mobile)
-- ✅ Type checking passing (mypy + TypeScript strict mode)
-- ✅ All sessions committed with good messages
-- ✅ No skipped sessions (unless intentional)
-- ✅ State file up to date
-- ✅ Working application ready to deploy
+**Current Focus:** Implementing `trackProgress` tool (Session 7)
+**Next Issue:** https://github.com/hmesfin/pm-mcp/issues/8
