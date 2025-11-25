@@ -120,43 +120,67 @@ function createEmptyCritique(): PlanCritique {
  */
 function parseSessions(content: string): ParsedSession[] {
   const sessions: ParsedSession[] = [];
-  const sessionRegex = /###\s*Session\s*#?(\d+)[:\s-]+([^\n]+)/gi;
-  let match;
 
-  while ((match = sessionRegex.exec(content)) !== null) {
-    const sessionNumber = parseInt(match[1], 10);
-    const title = match[2].trim();
+  // Support multiple session formats:
+  // 1. ### Session 1: Title (H3 heading)
+  // 2. **Session 1: Title** (3h) (bold inline, numbered list)
+  const sessionPatterns = [
+    /###\s*Session\s*#?(\d+)[:\s-]+([^\n]+)/gi,
+    /\*\*Session\s*(\d+):\s*([^*]+)\*\*\s*\((\d+)h?\)/gi,
+    /^\d+\.\s*\*\*Session\s*(\d+):\s*([^*]+)\*\*\s*\((\d+)h?\)/gim,
+  ];
 
-    // Find section content (until next session or end)
-    const startIndex = match.index;
-    const nextMatch = content.slice(startIndex + match[0].length).search(/###\s*Session/i);
-    const endIndex = nextMatch === -1
-      ? content.length
-      : startIndex + match[0].length + nextMatch;
-    const sectionContent = content.slice(startIndex, endIndex);
+  for (const sessionRegex of sessionPatterns) {
+    let match;
+    sessionRegex.lastIndex = 0; // Reset regex state
 
-    // Parse dependencies
-    const dependencies = parseDependencies(sectionContent);
+    while ((match = sessionRegex.exec(content)) !== null) {
+      const sessionNumber = parseInt(match[1], 10);
 
-    // Parse estimated time
-    const timeMatch = sectionContent.match(/\*\*Estimated Time\*\*:\s*(\d+h?)/i);
-    const estimatedTime = timeMatch ? timeMatch[1] : undefined;
+      // Skip if we already have this session
+      if (sessions.some(s => s.number === sessionNumber)) {
+        continue;
+      }
 
-    // Parse domain
-    const domainMatch = sectionContent.match(/\*\*Domain\*\*:\s*(\w+)/i);
-    const domain = domainMatch ? domainMatch[1] : undefined;
+      const title = match[2].trim();
 
-    // Parse objectives
-    const objectives = parseObjectives(sectionContent);
+      // Find section content (until next session or end)
+      const startIndex = match.index;
+      const remainingContent = content.slice(startIndex + match[0].length);
+      const nextSessionMatch = remainingContent.search(/(?:###\s*Session|\*\*Session\s*\d+:)/i);
+      const endIndex = nextSessionMatch === -1
+        ? content.length
+        : startIndex + match[0].length + nextSessionMatch;
+      const sectionContent = content.slice(startIndex, endIndex);
 
-    sessions.push({
-      number: sessionNumber,
-      title,
-      estimatedTime,
-      domain,
-      dependencies,
-      objectives,
-    });
+      // Parse dependencies
+      const dependencies = parseDependencies(sectionContent);
+
+      // Parse estimated time - check capture group first, then search content
+      let estimatedTime: string | undefined;
+      if (match[3]) {
+        estimatedTime = match[3] + 'h';
+      } else {
+        const timeMatch = sectionContent.match(/\*\*Estimated Time\*\*:\s*(\d+h?)/i);
+        estimatedTime = timeMatch ? timeMatch[1] : undefined;
+      }
+
+      // Parse domain
+      const domainMatch = sectionContent.match(/\*\*Domain\*\*:\s*(\w+)/i);
+      const domain = domainMatch ? domainMatch[1] : undefined;
+
+      // Parse objectives
+      const objectives = parseObjectives(sectionContent);
+
+      sessions.push({
+        number: sessionNumber,
+        title,
+        estimatedTime,
+        domain,
+        dependencies,
+        objectives,
+      });
+    }
   }
 
   return sessions.sort((a, b) => a.number - b.number);
