@@ -1,0 +1,15 @@
+{
+  "projectName": "Project Planner MCP Server",
+  "currentPhase": 0,
+  "currentSession": 0,
+  "completedSessions": [],
+  "blockedSessions": [],
+  "lastCheckpoint": "2025-11-25T00:10:47.887Z",
+  "status": "not_started",
+  "metrics": {
+    "totalTests": 0,
+    "avgCoverage": 0,
+    "timeSpent": "0h",
+    "velocity": 0
+  }
+}

@@ -1,0 +1,219 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project Planner MCP Configuration",
+  "description": "Configuration file for project-planner-mcp server",
+  "type": "object",
+  "properties": {
+    "database": {
+      "type": "object",
+      "description": "Database configuration",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to SQLite database file",
+          "default": "~/.project-planner/database.sqlite"
+        },
+        "backup": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "interval": {
+              "type": "string",
+              "description": "Backup interval (e.g., '1d', '1w')",
+              "default": "1d"
+            },
+            "path": {
+              "type": "string",
+              "default": "~/.project-planner/backups"
+            }
+          }
+        }
+      }
+    },
+    "github": {
+      "type": "object",
+      "description": "GitHub integration settings",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "GitHub personal access token (can use ${GITHUB_TOKEN} env var)",
+          "default": "${GITHUB_TOKEN}"
+        },
+        "defaultLabels": {
+          "type": "object",
+          "description": "Default label creation settings",
+          "properties": {
+            "phases": {
+              "type": "boolean",
+              "description": "Create phase-1, phase-2, etc. labels",
+              "default": true
+            },
+            "domains": {
+              "type": "boolean",
+              "description": "Create backend, frontend, mobile labels",
+              "default": true
+            },
+            "sessions": {
+              "type": "boolean",
+              "description": "Create session-1, session-2, etc. labels",
+              "default": true
+            },
+            "tddPhases": {
+              "type": "boolean",
+              "description": "Create red-phase, green-phase, refactor-phase labels",
+              "default": true
+            }
+          }
+        },
+        "projectAutomation": {
+          "type": "boolean",
+          "description": "Enable automatic project board card movement",
+          "default": true
+        },
+        "autoSync": {
+          "type": "boolean",
+          "description": "Automatically sync state with GitHub on updates",
+          "default": false
+        }
+      },
+      "required": ["token"]
+    },
+    "templates": {
+      "type": "object",
+      "description": "Template configuration",
+      "properties": {
+        "customPath": {
+          "type": "string",
+          "description": "Path to custom templates directory",
+          "default": "~/.project-planner/templates"
+        },
+        "builtinTemplates": {
+          "type": "boolean",
+          "description": "Enable built-in templates (blog, ecommerce, etc.)",
+          "default": true
+        }
+      }
+    },
+    "intelligence": {
+      "type": "object",
+      "description": "Intelligence engine settings",
+      "properties": {
+        "enableLearning": {
+          "type": "boolean",
+          "description": "Enable cross-project learning",
+          "default": true
+        },
+        "trackMetrics": {
+          "type": "boolean",
+          "description": "Track historical metrics",
+          "default": true
+        },
+        "suggestionThreshold": {
+          "type": "number",
+          "description": "Confidence threshold for suggestions (0-1)",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.7
+        },
+        "patternRecognition": {
+          "type": "boolean",
+          "description": "Enable pattern recognition",
+          "default": true
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Default settings for operations",
+      "properties": {
+        "createGitHubProject": {
+          "type": "boolean",
+          "description": "Create GitHub Project board by default",
+          "default": true
+        },
+        "createMilestones": {
+          "type": "boolean",
+          "description": "Create milestones by default",
+          "default": true
+        },
+        "syncDirection": {
+          "type": "string",
+          "enum": ["pull", "push", "bidirectional"],
+          "description": "Default sync direction",
+          "default": "bidirectional"
+        },
+        "progressFormat": {
+          "type": "string",
+          "enum": ["summary", "detailed", "json"],
+          "description": "Default progress report format",
+          "default": "summary"
+        }
+      }
+    },
+    "notifications": {
+      "type": "object",
+      "description": "Notification settings",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["console", "github", "slack", "email"]
+          },
+          "default": ["console"]
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "session_start",
+              "session_complete",
+              "phase_complete",
+              "project_complete",
+              "blocker_detected",
+              "pr_created"
+            ]
+          },
+          "default": ["blocker_detected", "pr_created"]
+        }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "description": "Performance optimization settings",
+      "properties": {
+        "cacheEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "cacheTTL": {
+          "type": "number",
+          "description": "Cache TTL in seconds",
+          "default": 3600
+        },
+        "rateLimiting": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "maxRequestsPerMinute": {
+              "type": "number",
+              "default": 60
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["github"]
+}
