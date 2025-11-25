@@ -14,6 +14,8 @@ import {
 
 // Tool implementations
 import { generateProjectPlan } from "./src/tools/planning/generateProjectPlan.js";
+import { analyzeRequirements } from "./src/tools/planning/analyzeRequirements.js";
+import { critiquePlan } from "./src/tools/planning/critiquePlan.js";
 import { setupGitHubProject } from "./src/tools/github/setupGitHubProject.js";
 import { trackProgress } from "./src/tools/github/trackProgress.js";
 import { syncWithGitHub } from "./src/tools/github/syncWithGitHub.js";
@@ -410,14 +412,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "analyzeRequirements":
+      const analyzeResult = await analyzeRequirements(args);
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify({
-              message: "analyzeRequirements tool - implementation pending",
-              params: args,
-            }, null, 2),
+            text: JSON.stringify(analyzeResult, null, 2),
           },
         ],
       };
@@ -434,14 +434,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "critiquePlan":
+      const critiqueResult = await critiquePlan(args);
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify({
-              message: "critiquePlan tool - implementation pending",
-              params: args,
-            }, null, 2),
+            text: JSON.stringify(critiqueResult, null, 2),
           },
         ],
       };
