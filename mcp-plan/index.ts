@@ -25,6 +25,9 @@ import { estimateEffort } from "./src/tools/intelligence/estimateEffort.js";
 // Resource implementations
 import { listResources, readResource } from "./src/resources/index.js";
 
+// Prompt implementations
+import { listPrompts, getPrompt } from "./src/prompts/index.js";
+
 const server = new Server(
   {
     name: "project-planner",
@@ -563,85 +566,14 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 // ============================================================================
 
 server.setRequestHandler(ListPromptsRequestSchema, async () => {
-  return {
-    prompts: [
-      {
-        name: "discovery-questions",
-        description: "Generate intelligent discovery questions for project planning",
-        arguments: [
-          {
-            name: "projectType",
-            description: "Type of project",
-            required: true,
-          },
-          {
-            name: "previousAnswers",
-            description: "Previous answers for follow-up questions",
-            required: false,
-          },
-        ],
-      },
-      {
-        name: "architecture-review",
-        description: "Generate comprehensive architecture review prompt",
-        arguments: [
-          {
-            name: "plan",
-            description: "Project plan content",
-            required: true,
-          },
-          {
-            name: "requirements",
-            description: "Requirements content",
-            required: true,
-          },
-          {
-            name: "focus",
-            description: "Focus area (backend, frontend, mobile, all)",
-            required: false,
-          },
-        ],
-      },
-      {
-        name: "estimate-effort",
-        description: "Generate effort estimation prompt with historical context",
-        arguments: [
-          {
-            name: "requirements",
-            description: "Requirements content",
-            required: true,
-          },
-          {
-            name: "complexity",
-            description: "Project complexity level",
-            required: true,
-          },
-          {
-            name: "similarProjects",
-            description: "Similar projects for reference",
-            required: false,
-          },
-        ],
-      },
-    ],
-  };
+  const prompts = listPrompts();
+  return { prompts };
 });
 
 server.setRequestHandler(GetPromptRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
-
-  // Prompt handler implementations will go here
-  return {
-    messages: [
-      {
-        role: "user",
-        content: {
-          type: "text",
-          text: `Prompt: ${name} - implementation pending\nArguments: ${JSON.stringify(args, null, 2)}`,
-        },
-      },
-    ],
-  };
+  const result = getPrompt(name, args || {});
+  return result;
 });
 
 // ============================================================================

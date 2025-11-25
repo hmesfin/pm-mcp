@@ -27,7 +27,7 @@ export function parsePlan(content: string): ParsedPlan {
   const complexity = complexityMatch ? complexityMatch[1].toLowerCase() : "intermediate";
 
   // Extract total estimates
-  const totalMatch = content.match(/##\s+Total Estimates[\s\S]+?-\s+\*\*Total Sessions\*\*:\s+(\d+)[\s\S]+?-\s+\*\*Estimated Time\*\*:\s+([\d\-]+h)/);
+  const totalMatch = content.match(/##\s+Total Estimates[\s\S]+?-\s+\*\*Total Sessions\*\*:\s+(\d+)[\s\S]+?-\s+\*\*Estimated Time\*\*:\s+([\d-]+h)/);
   const totalSessions = totalMatch ? parseInt(totalMatch[1]) : 0;
   const totalEstimatedTime = totalMatch ? totalMatch[2] : "0h";
 
