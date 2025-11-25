@@ -1,6 +1,58 @@
-# Project Planner MCP Server - Specification
+# Project Planner MCP Server
 
-Complete TypeScript specification for the AI-driven project planning and execution orchestrator with GitHub integration.
+AI-driven project planning and execution orchestrator with GitHub integration.
+
+[![npm version](https://img.shields.io/npm/v/project-planner-mcp.svg)](https://www.npmjs.com/package/project-planner-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Installation
+
+### Claude Code (Recommended)
+
+Add to your Claude Code MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "project-planner": {
+      "command": "npx",
+      "args": ["-y", "project-planner-mcp"],
+      "env": {
+        "GITHUB_TOKEN": "your-github-token"
+      }
+    }
+  }
+}
+```
+
+### Manual Installation
+
+```bash
+npm install -g project-planner-mcp
+```
+
+Then add to your MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "project-planner": {
+      "command": "project-planner-mcp",
+      "env": {
+        "GITHUB_TOKEN": "your-github-token"
+      }
+    }
+  }
+}
+```
+
+### GitHub Token
+
+Get a GitHub Personal Access Token at https://github.com/settings/tokens
+
+Required scopes:
+- `repo` (all)
+- `admin:org` (read:org) - optional, for organization projects
 
 ## Overview
 
@@ -156,17 +208,16 @@ Full TypeScript with strict mode:
 
 ## Implementation Status
 
-**Status**: Specification Complete ✅
+**Status**: v1.0.0 Released
 
-**Next Steps**:
-1. Implement tool handlers
-2. Implement resource handlers
-3. Implement prompt handlers
-4. Build services (planParser, githubClient, stateManager, etc.)
-5. Create database migrations
-6. Build intelligence engine
-7. Write tests
+- 11 MCP tools implemented
+- 4 resource handlers
+- 3 prompt templates
+- 593+ tests passing
+- Full TypeScript with strict mode
+
+See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ## License
 
-MIT
+MIT - See [LICENSE](LICENSE) for details.

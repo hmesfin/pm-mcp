@@ -38,7 +38,7 @@ This MCP server focuses on creating comprehensive, executable plans that AI agen
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/project-planner-mcp.git
+git clone https://github.com/hmesfin/project-planner-mcp.git
 cd project-planner-mcp
 
 # Install dependencies

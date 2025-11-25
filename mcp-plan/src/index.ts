@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // src/index.ts
 // Main MCP server implementation
 
@@ -13,20 +14,20 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 
 // Tool implementations
-import { generateProjectPlan } from "./src/tools/planning/generateProjectPlan.js";
-import { analyzeRequirements } from "./src/tools/planning/analyzeRequirements.js";
-import { critiquePlan } from "./src/tools/planning/critiquePlan.js";
-import { setupGitHubProject } from "./src/tools/github/setupGitHubProject.js";
-import { trackProgress } from "./src/tools/github/trackProgress.js";
-import { syncWithGitHub } from "./src/tools/github/syncWithGitHub.js";
-import { reviewArchitecture } from "./src/tools/intelligence/reviewArchitecture.js";
-import { estimateEffort } from "./src/tools/intelligence/estimateEffort.js";
+import { generateProjectPlan } from "./tools/planning/generateProjectPlan.js";
+import { analyzeRequirements } from "./tools/planning/analyzeRequirements.js";
+import { critiquePlan } from "./tools/planning/critiquePlan.js";
+import { setupGitHubProject } from "./tools/github/setupGitHubProject.js";
+import { trackProgress } from "./tools/github/trackProgress.js";
+import { syncWithGitHub } from "./tools/github/syncWithGitHub.js";
+import { reviewArchitecture } from "./tools/intelligence/reviewArchitecture.js";
+import { estimateEffort } from "./tools/intelligence/estimateEffort.js";
 
 // Resource implementations
-import { listResources, readResource } from "./src/resources/index.js";
+import { listResources, readResource } from "./resources/index.js";
 
 // Prompt implementations
-import { listPrompts, getPrompt } from "./src/prompts/index.js";
+import { listPrompts, getPrompt } from "./prompts/index.js";
 
 const server = new Server(
   {
@@ -400,10 +401,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 });
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
+  const { name, arguments: args = {} } = request.params;
 
-  // Tool handler implementations will go here
-  // For now, return placeholder responses
+  // Type-safe args accessor
+  const toolArgs = args as Record<string, unknown>;
 
   switch (name) {
     case "conductDiscovery":
@@ -413,14 +414,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             type: "text",
             text: JSON.stringify({
               message: "conductDiscovery tool - implementation pending",
-              params: args,
+              params: toolArgs,
             }, null, 2),
           },
         ],
       };
 
     case "analyzeRequirements":
-      const analyzeResult = await analyzeRequirements(args);
+      const analyzeResult = await analyzeRequirements(toolArgs as unknown as Parameters<typeof analyzeRequirements>[0]);
       return {
         content: [
           {
@@ -431,7 +432,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "generateProjectPlan":
-      const result = await generateProjectPlan(args);
+      const result = await generateProjectPlan(toolArgs as unknown as Parameters<typeof generateProjectPlan>[0]);
       return {
         content: [
           {
@@ -442,7 +443,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "critiquePlan":
-      const critiqueResult = await critiquePlan(args);
+      const critiqueResult = await critiquePlan(toolArgs as unknown as Parameters<typeof critiquePlan>[0]);
       return {
         content: [
           {
@@ -453,7 +454,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "setupGitHubProject":
-      const setupResult = await setupGitHubProject(args);
+      const setupResult = await setupGitHubProject(toolArgs as unknown as Parameters<typeof setupGitHubProject>[0]);
       return {
         content: [
           {
@@ -464,7 +465,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "syncWithGitHub":
-      const syncResult = await syncWithGitHub(args);
+      const syncResult = await syncWithGitHub(toolArgs as unknown as Parameters<typeof syncWithGitHub>[0]);
       return {
         content: [
           {
@@ -475,7 +476,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "trackProgress":
-      const progressResult = await trackProgress(args);
+      const progressResult = await trackProgress(toolArgs as unknown as Parameters<typeof trackProgress>[0]);
       return {
         content: [
           {
@@ -492,7 +493,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             type: "text",
             text: JSON.stringify({
               message: "updateSessionStatus tool - implementation pending",
-              params: args,
+              params: toolArgs,
             }, null, 2),
           },
         ],
@@ -505,14 +506,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             type: "text",
             text: JSON.stringify({
               message: "findNextSession tool - implementation pending",
-              params: args,
+              params: toolArgs,
             }, null, 2),
           },
         ],
       };
 
     case "reviewArchitecture":
-      const archResult = await reviewArchitecture(args);
+      const archResult = await reviewArchitecture(toolArgs as unknown as Parameters<typeof reviewArchitecture>[0]);
       return {
         content: [
           {
@@ -523,7 +524,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     case "estimateEffort":
-      const effortResult = await estimateEffort(args);
+      const effortResult = await estimateEffort(toolArgs as unknown as Parameters<typeof estimateEffort>[0]);
       return {
         content: [
           {
@@ -573,7 +574,11 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => {
 server.setRequestHandler(GetPromptRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
   const result = getPrompt(name, args || {});
-  return result;
+  // MCP SDK expects GetPromptResult type which includes optional description
+  return {
+    description: result.messages[0]?.content?.text?.substring(0, 100) + '...',
+    messages: result.messages,
+  };
 });
 
 // ============================================================================
