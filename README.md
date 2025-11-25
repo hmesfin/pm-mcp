@@ -1,5 +1,8 @@
 # Project Planner MCP Server
 
+[![npm version](https://img.shields.io/npm/v/project-planner-mcp.svg)](https://www.npmjs.com/package/project-planner-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 An MCP (Model Context Protocol) server that transforms app ideas into comprehensive, TDD-driven, session-based implementation plans with GitHub integration.
 
 ## Philosophy
@@ -36,32 +39,41 @@ This MCP server focuses on creating comprehensive, executable plans that AI agen
 
 ### Installation
 
+#### Option 1: npm (Recommended)
+
+Install from npm: **[project-planner-mcp](https://www.npmjs.com/package/project-planner-mcp)**
+
 ```bash
-# Clone the repository
-git clone https://github.com/hmesfin/project-planner-mcp.git
-cd project-planner-mcp
+npm install -g project-planner-mcp
+```
 
-# Install dependencies
-cd mcp-plan
+#### Option 2: npx (No install)
+
+Use directly with npx - no installation required.
+
+#### Option 3: From Source
+
+```bash
+git clone https://github.com/hmesfin/pm-mcp.git
+cd pm-mcp/mcp-plan
 npm install
-
-# Build the server
 npm run build
-
-# Add to your Claude Code MCP settings
-# Copy config-template.json and update paths
 ```
 
 ### Configuration
 
-Add to your MCP settings (e.g., `~/Library/Application Support/Claude/claude_desktop_config.json`):
+#### Claude Code
 
+Add to your Claude Code settings (`~/.claude.json` on Linux/Mac):
+
+**Using npx (recommended):**
 ```json
 {
   "mcpServers": {
     "project-planner": {
-      "command": "node",
-      "args": ["/path/to/project-planner-mcp/mcp-plan/dist/index.js"],
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "project-planner-mcp"],
       "env": {
         "GITHUB_TOKEN": "your-github-token"
       }
@@ -69,6 +81,47 @@ Add to your MCP settings (e.g., `~/Library/Application Support/Claude/claude_des
   }
 }
 ```
+
+**Using global install:**
+```json
+{
+  "mcpServers": {
+    "project-planner": {
+      "type": "stdio",
+      "command": "project-planner-mcp",
+      "env": {
+        "GITHUB_TOKEN": "your-github-token"
+      }
+    }
+  }
+}
+```
+
+#### Claude Desktop
+
+Add to Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on Mac):
+
+```json
+{
+  "mcpServers": {
+    "project-planner": {
+      "command": "npx",
+      "args": ["-y", "project-planner-mcp"],
+      "env": {
+        "GITHUB_TOKEN": "your-github-token"
+      }
+    }
+  }
+}
+```
+
+### GitHub Token
+
+Get a Personal Access Token at https://github.com/settings/tokens
+
+Required scopes:
+- `repo` (all) - For creating issues, milestones, labels
+- `read:org` (optional) - For organization projects
 
 ### Basic Usage
 
