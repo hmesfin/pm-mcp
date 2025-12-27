@@ -23,6 +23,19 @@
 **Third-party Integrations**:
 {{INTEGRATIONS}}
 
+## Session Format Guide
+
+Each session follows this structure:
+
+```markdown
+### Session N: Title (Xh)
+- **Domain**: backend | frontend | mobile | e2e | infrastructure
+- **Dependencies**: Session X, Session Y (or "None")
+- **Objectives**:
+  - Objective 1
+  - Objective 2
+```
+
 ## Phases
 
 ### Phase 1: Backend Foundation

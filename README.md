@@ -14,23 +14,27 @@ This MCP server focuses on creating comprehensive, executable plans that AI agen
 ## Features
 
 ### 🎯 Intelligent Planning
+
 - **AI-driven discovery** - Asks strategic questions to understand your app requirements
 - **Template-based generation** - Pre-built templates for common app types (Blog, E-commerce, SaaS, etc.)
 - **Custom planning** - Build from scratch for unique requirements
 - **TDD enforcement** - Every session follows RED-GREEN-REFACTOR cycle
 
 ### 🐙 GitHub Integration
+
 - **Automated setup** - Creates issues, milestones, and labels from your plan
 - **Progress tracking** - Real-time metrics from GitHub issue status
 - **Session management** - Each session = 1 GitHub issue with full TDD workflow
 - **Milestone tracking** - Each phase = 1 GitHub milestone
 
 ### 🧠 Cross-Project Intelligence
+
 - **Pattern learning** - Learns from past projects to improve estimates
 - **Architecture review** - Analyzes requirements for technical feasibility
 - **Effort estimation** - Smart time estimates based on historical data
 
 ### 📊 Session-Based Execution
+
 - **Context-optimized** - Sessions sized to avoid AI context fatigue
 - **Clear exit criteria** - Know exactly when a session is complete
 - **Dependency management** - Proper ordering of implementation tasks
@@ -67,6 +71,7 @@ npm run build
 Add to your Claude Code settings (`~/.claude.json` on Linux/Mac):
 
 **Using npx (recommended):**
+
 ```json
 {
   "mcpServers": {
@@ -83,6 +88,7 @@ Add to your Claude Code settings (`~/.claude.json` on Linux/Mac):
 ```
 
 **Using global install:**
+
 ```json
 {
   "mcpServers": {
@@ -117,25 +123,29 @@ Add to Claude Desktop config (`~/Library/Application Support/Claude/claude_deskt
 
 ### GitHub Token
 
-Get a Personal Access Token at https://github.com/settings/tokens
+Get a Personal Access Token at <https://github.com/settings/tokens>
 
 Required scopes:
+
 - `repo` (all) - For creating issues, milestones, labels
 - `read:org` (optional) - For organization projects
 
 ### Basic Usage
 
 1. **Generate a plan from requirements**
+
    ```
    Use the generateProjectPlan tool with your REQUIREMENTS.md
    ```
 
 2. **Setup GitHub project**
+
    ```
    Use the setupGitHubProject tool to create issues and milestones
    ```
 
 3. **Track progress**
+
    ```
    Use the trackProgress tool to see completion metrics
    ```
@@ -175,12 +185,14 @@ project-planner-mcp/
 ## MCP Tools
 
 ### Planning Tools
+
 - **conductDiscovery** - Interactive Q&A to gather requirements
 - **generateProjectPlan** - Create PROJECT_PLAN.md from requirements
 - **analyzeRequirements** - Parse and validate REQUIREMENTS.md
 - **critiquePlan** - Review plan for issues and improvements
 
 ### GitHub Integration Tools
+
 - **setupGitHubProject** - Create issues, milestones, labels
 - **trackProgress** - Query GitHub for progress metrics
 - **syncWithGitHub** - Sync local state with GitHub
@@ -188,6 +200,7 @@ project-planner-mcp/
 - **updateSessionStatus** - Mark sessions as started/completed
 
 ### Intelligence Tools
+
 - **reviewArchitecture** - Technical feasibility analysis
 - **estimateEffort** - Time and complexity estimates
 
@@ -217,12 +230,14 @@ Sessions are sized to avoid context fatigue:
 The MCP creates a complete GitHub project structure:
 
 ### Labels (16 total)
+
 - **Phase labels**: `phase-1` through `phase-5`
 - **Domain labels**: `backend`, `frontend`, `mobile`, `e2e`, `infrastructure`
 - **TDD phase labels**: `red-phase`, `green-phase`, `refactor-phase`
 - **Status labels**: `in-progress`, `blocked`, `ready-for-review`
 
 ### Milestones (1 per phase)
+
 - Phase 1: Core Infrastructure
 - Phase 2: Feature Implementation
 - Phase 3: Integration & Testing
@@ -230,7 +245,9 @@ The MCP creates a complete GitHub project structure:
 - Phase 5: Documentation & Deployment
 
 ### Issues (1 per session)
+
 Each issue includes:
+
 - 🎯 Objectives
 - 🔴 RED phase tasks
 - 🟢 GREEN phase tasks
@@ -286,6 +303,7 @@ npm run format
 This MCP server replaces the old slash command-based planning system. See [docs/archive/MIGRATION.md](docs/archive/MIGRATION.md) for migration instructions.
 
 **Key differences:**
+
 - **MCP tools** instead of slash commands
 - **GitHub integration** for progress tracking
 - **Cross-project intelligence** with SQLite database
@@ -295,7 +313,7 @@ This MCP server replaces the old slash command-based planning system. See [docs/
 
 This MCP server was planned and is being built using itself! See [project-plans/mcp-server/](project-plans/mcp-server/) for the plan we're following.
 
-**View the actual GitHub project**: https://github.com/hmesfin/pm-mcp
+**View the actual GitHub project**: <https://github.com/hmesfin/pm-mcp>
 
 ## Contributing
 
@@ -308,7 +326,7 @@ MIT
 ## Support
 
 - **Documentation**: [docs/PLANNING_GUIDE.md](docs/PLANNING_GUIDE.md)
-- **Issues**: https://github.com/hmesfin/pm-mcp/issues
+- **Issues**: <https://github.com/hmesfin/pm-mcp/issues>
 - **Architecture**: [CLAUDE.md](CLAUDE.md)
 
 ---

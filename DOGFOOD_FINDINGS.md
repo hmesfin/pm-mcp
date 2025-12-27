@@ -14,18 +14,18 @@ Results from running our own `analyzeRequirements` and `critiquePlan` tools agai
 
 ### Gaps to Address (Post-MVP)
 
-- [ ] Add explicit **Functional Requirements** section (currently embedded in tool descriptions)
-- [ ] Add **Technical Stack** section (partially exists, needs formalization)
+- [x] Add explicit **Functional Requirements** section (currently embedded in tool descriptions)
+- [x] Add **Technical Stack** section (partially exists, needs formalization)
 - [ ] Add **UI/UX Requirements** section (N/A for MCP server, but template should handle this)
 
 ### Ambiguities to Clarify
 
-| Location | Vague Term | Action |
-|----------|------------|--------|
-| GitHub Integration Tools | "etc." | Enumerate all label types explicitly |
-| Intelligence Tools | "appropriate" | Define specific criteria for recommendations |
-| Scalability section | "efficient" | Add specific performance metrics |
-| Open Questions | "multiple" | Specify exact numbers or ranges |
+| Location | Vague Term | Action | Status |
+|----------|------------|--------|--------|
+| GitHub Integration Tools | "etc." | Enumerate all label types explicitly | ✅ Done |
+| Intelligence Tools | "appropriate" | Define specific criteria for recommendations | ✅ Done |
+| Scalability section | "efficient" | Add specific performance metrics | ✅ Done |
+| Open Questions | "multiple" | Specify exact numbers or ranges | ✅ Done |
 
 ### Conflicts Found
 
@@ -58,10 +58,10 @@ Tool detected 42h potential savings - this is inflated because dependencies aren
 
 ### Improvements for Future Plans
 
-- [ ] Add explicit `**Dependencies**: Session X, Y` to each session
-- [ ] Add `**Domain**: backend|frontend|infrastructure` labels
+- [x] Add explicit `**Dependencies**: Session X, Y` to each session
+- [x] Add `**Domain**: backend|frontend|infrastructure` labels
 - [ ] Add structured `#### Objectives` section with bullet points
-- [ ] Consider using H3 headers (`### Session N`) for better parsing
+- [x] Consider using H3 headers (`### Session N`) for better parsing
 
 ## Bug Fixed During Dogfood
 
@@ -74,8 +74,8 @@ Tool detected 42h potential savings - this is inflated because dependencies aren
 ## Action Items
 
 1. ✅ Capture findings in this document
-2. ⬜ Create GitHub issue for tech-debt backlog
-3. ⬜ Update PROJECT_PLAN_TEMPLATE.md with better structure (post-MVP)
+2. ✅ Create GitHub issue for tech-debt backlog (Issue #17)
+3. ✅ Update PROJECT_PLAN_TEMPLATE.md with better structure (post-MVP)
 4. ⬜ Consider adding a `--format` flag to generateProjectPlan for output style
 
 ---

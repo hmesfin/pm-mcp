@@ -14,6 +14,10 @@
 
 ### Session Overview
 
+**Domain**: {{SESSION_DOMAIN}}
+
+**Dependencies**: {{SESSION_DEPENDENCIES_INLINE}}
+
 **Objectives**:
 {{SESSION_OBJECTIVES}}
 
