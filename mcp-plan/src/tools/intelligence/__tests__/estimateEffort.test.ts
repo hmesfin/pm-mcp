@@ -47,7 +47,7 @@ const complexRequirements = `# Requirements: E-commerce Platform
 ## Technical Stack
 - Backend: Django REST Framework
 - Frontend: Vue.js 3
-- Mobile: React Native
+- Mobile: Flutter
 - Database: PostgreSQL
 - Cache: Redis
 - Search: Elasticsearch
@@ -493,7 +493,7 @@ describe('estimateEffort', () => {
         requirements: complexRequirements,
       });
 
-      // complexRequirements includes React Native
+      // complexRequirements includes Flutter
       const domains = result.byDomain.map((d) => d.domain);
       expect(domains).toContain('mobile');
     });

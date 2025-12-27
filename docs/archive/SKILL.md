@@ -1,21 +1,21 @@
 ---
-name: django-vue-react-native
+name: django-vue-flutter
 description: |
-  Comprehensive guide for developing full-stack applications using the Django + Vue.js + React Native starter template.
+  Comprehensive guide for developing full-stack applications using the Django + Vue.js + Flutter starter template.
   Use this skill when creating new projects from the fullstack-starter-djvurn template, or when working on projects that follow this architecture.
 
-  Covers: Django app creation, DRF API development, Vue.js components, React Native mobile development, database migrations,
+  Covers: Django app creation, DRF API development, Vue.js components, Flutter mobile development, database migrations,
   API client generation, testing (TDD), type safety (mypy, TypeScript), code quality enforcement, and Docker-based workflows.
 
-  Trigger patterns: "create new Django app", "add API endpoint", "build Vue component", "setup React Native feature",
+  Trigger patterns: "create new Django app", "add API endpoint", "build Vue component", "setup Flutter feature",
   "write tests for", "run migrations", "generate API client", "type check", "follow TDD"
 ---
 
-# Django + Vue.js + React Native Fullstack Development
+# Django + Vue.js + Flutter Fullstack Development
 
 ## Overview
 
-This skill guides development with the fullstack-starter-djvurn template: a Docker-based monorepo with Django (DRF) backend, Vue.js (TypeScript) frontend, and React Native mobile app.
+This skill guides development with the fullstack-starter-djvurn template: a Docker-based monorepo with Django (DRF) backend, Vue.js (TypeScript) frontend, and Flutter mobile app.
 
 **Template location**: `\\wsl.localhost\Ubuntu\home\hmesfin\dev\templates\fullstack-starter-djvurn`
 
@@ -24,7 +24,7 @@ This skill guides development with the fullstack-starter-djvurn template: a Dock
 ### Stack Components
 - **Backend**: Django 5.x + DRF + Celery + PostgreSQL + Redis
 - **Frontend**: Vue 3 + TypeScript + Vite + Shadcn-vue + Tailwind v4
-- **Mobile**: React Native + Expo + TypeScript
+- **Mobile**: Flutter + Expo + TypeScript
 - **Infrastructure**: Docker Compose (local/staging/production)
 - **Package Management**: Backend uses `uv`, Frontend uses `npm`
 
@@ -169,7 +169,7 @@ See `references/PROJECT_STRUCTURE.md` for complete directory layout and file org
 5. Apply: `docker compose run --rm django python manage.py migrate`
 6. Regenerate API client: `docker compose run --rm frontend npm run generate:api`
 
-### React Native Features
+### Flutter Features
 
 **See `references/REACT_NATIVE_PATTERNS.md` for mobile development workflows**
 

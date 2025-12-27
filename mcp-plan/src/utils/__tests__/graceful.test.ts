@@ -110,6 +110,9 @@ describe('Graceful Degradation Utilities', () => {
 
       const promise = withRetry(fn, { maxRetries: 3, delay: 100 });
 
+      // Prevent unhandled rejection warning during timer advancement
+      promise.catch(() => {});
+
       // Fast-forward through all retries
       await vi.advanceTimersByTimeAsync(300);
 
@@ -193,6 +196,9 @@ describe('Graceful Degradation Utilities', () => {
 
       const promise = withTimeout(fn, 1000);
 
+      // Prevent unhandled rejection warning during timer advancement
+      promise.catch(() => {});
+
       await vi.advanceTimersByTimeAsync(1000);
 
       await expect(promise).rejects.toThrow('timed out');
@@ -204,6 +210,9 @@ describe('Graceful Degradation Utilities', () => {
       });
 
       const promise = withTimeout(fn, 500);
+
+      // Prevent unhandled rejection warning during timer advancement
+      promise.catch(() => {});
 
       await vi.advanceTimersByTimeAsync(500);
 

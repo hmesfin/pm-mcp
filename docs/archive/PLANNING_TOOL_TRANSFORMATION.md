@@ -522,7 +522,7 @@ Identifies potential issues:
 1. **Executor Agents**: Specialized agents that read plans and execute sessions
    - backend-builder (Django models, serializers, viewsets)
    - frontend-builder (Vue components, composables, views)
-   - mobile-builder (React Native screens, navigation)
+   - mobile-builder (Flutter screens, navigation)
    - integration-tester (E2E workflows)
 
 2. **Session State Tracker**: `.agent-state.json` - Tracks progress, current session, blockers
@@ -628,10 +628,10 @@ Identifies potential issues:
 
 **Phase 3.4: Mobile & E2E Agents** (Week 4) ✅ COMPLETED
 - ✅ Create mobile-builder.md agent
-  - Created `.claude/agents/mobile-builder.md` - Complete React Native + TypeScript specification
+  - Created `.claude/agents/mobile-builder.md` - Complete Flutter + TypeScript specification
   - Session types: Mobile Setup, Screen Implementation, Mobile-Specific Features
-  - Test standards for Jest + React Native Testing Library
-  - Navigation with React Navigation, UI with React Native Paper
+  - Test standards for Jest + Flutter Testing Library
+  - Navigation with React Navigation, UI with Flutter Paper
   - Platform-specific code patterns (iOS vs Android)
 - ✅ Create e2e-tester.md agent
   - Created `.claude/agents/e2e-tester.md` - Complete Playwright E2E testing specification
@@ -641,7 +641,7 @@ Identifies potential issues:
   - Performance validation targets
 - ✅ Create mobile-executor.ts
   - Created `.claude/infrastructure/mobile-executor.ts` - SessionExecutor implementation
-  - Builds prompts for React Native screens, components, hooks
+  - Builds prompts for Flutter screens, components, hooks
   - Handles Jest tests, platform-specific optimizations
   - Coverage target: 85% (same as frontend)
 - ✅ Create e2e-executor.ts
@@ -713,7 +713,7 @@ All 5 sub-phases of Phase 3 (Agent Integration) are now complete:
    - Frontend executor, session type detection, Vue 3 + TypeScript support
 
 4. **Phase 3.4**: Mobile & E2E Agents ✅
-   - Mobile executor (React Native), E2E executor (Playwright), complete executor set
+   - Mobile executor (Flutter), E2E executor (Playwright), complete executor set
 
 5. **Phase 3.5**: Orchestration ✅
    - Phase orchestrator, /execute-phase command, /resume-session command, parallel execution

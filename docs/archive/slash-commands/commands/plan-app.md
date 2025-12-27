@@ -119,7 +119,7 @@ Enter number [1-4]:
 #### If User Selects [2] Full feature parity
 
 - All web features go to mobile
-- Add React Native phase with all features
+- Add Flutter phase with all features
 - Warn: "This may result in mobile UI complexity"
 
 #### If User Selects [3] Selective features (RECOMMENDED)
@@ -517,7 +517,7 @@ Create `project-plans/<app-name>/PROJECT_PLAN.md`:
 ## Technical Stack
 - Backend: Django 5.2 + DRF + PostgreSQL
 - Frontend: Vue 3 + TypeScript + Shadcn-vue
-- Mobile: [React Native if applicable]
+- Mobile: [Flutter if applicable]
 - Infrastructure: Docker + Redis + Celery
 
 ## Phases

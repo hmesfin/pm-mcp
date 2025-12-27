@@ -209,7 +209,7 @@ const FEATURE_BASELINES: {
 
   // Mobile Specific
   {
-    keywords: ['mobile app', 'ios', 'android', 'react native'],
+    keywords: ['mobile app', 'ios', 'android', 'flutter'],
     name: 'Mobile App Foundation',
     sessions: { basic: 3, intermediate: 5, advanced: 8 },
     domains: ['mobile'],
@@ -493,7 +493,7 @@ function calculateDomainDistribution(
 
   // Check for mobile in requirements
   const content = requirements.toLowerCase();
-  if (content.includes('mobile') || content.includes('react native') ||
+  if (content.includes('mobile') || content.includes('flutter') ||
       content.includes('ios') || content.includes('android')) {
     // Shift some frontend sessions to mobile
     const mobileShare = domainMap.frontend * 0.3;

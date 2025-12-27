@@ -459,7 +459,7 @@ project-plans/{project-name}/
 - `{{APP_DESCRIPTION}}` - Brief description
 - `{{COMPLEXITY_LEVEL}}` - basic/intermediate/advanced
 - `{{PROJECT_TYPE}}` - blog/ecommerce/saas/social/projectmanagement
-- `{{MOBILE_STACK}}` - React Native + Expo or "Not applicable"
+- `{{MOBILE_STACK}}` - Flutter or "Not applicable"
 - `{{CORE_FEATURES}}` - Bulleted list
 - `{{INTEGRATIONS}}` - Third-party services
 - `{{PHASE_X_SESSIONS}}` - Session breakdown

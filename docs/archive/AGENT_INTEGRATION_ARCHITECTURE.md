@@ -34,7 +34,7 @@ Specialized agents that read plans and execute sessions:
 |-------|---------|-------|---------|
 | **backend-builder** | Implements backend sessions (models, serializers, viewsets) | `PHASE_1_BACKEND_FOUNDATION.md` | Django code, tests, migrations |
 | **frontend-builder** | Implements frontend sessions (components, composables, views) | `PHASE_2_FRONTEND_FOUNDATION.md` | Vue components, composables, Zod schemas |
-| **mobile-builder** | Implements mobile sessions (screens, navigation) | `PHASE_3_MOBILE_APP.md` | React Native screens, navigation |
+| **mobile-builder** | Implements mobile sessions (screens, navigation) | `PHASE_3_MOBILE_APP.md` | Flutter screens, navigation |
 | **integration-tester** | Implements E2E testing sessions | `PHASE_4_INTEGRATION.md` | Playwright tests, E2E workflows |
 
 **Location**: `.claude/agents/backend-builder.md`, `.claude/agents/frontend-builder.md`, etc.

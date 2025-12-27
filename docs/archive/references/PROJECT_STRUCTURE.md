@@ -6,7 +6,7 @@
 project-root/
 ├── backend/              # Django backend
 ├── frontend/             # Vue.js frontend
-├── mobile/              # React Native mobile app
+├── mobile/              # Flutter mobile app
 ├── compose/             # Docker service configurations
 ├── .envs/               # Environment variables
 ├── docs/                # Sphinx documentation

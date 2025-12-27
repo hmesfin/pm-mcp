@@ -326,7 +326,7 @@ export class PhaseOrchestrator {
     // Mobile detection
     if (phaseName.includes('mobile') ||
         sessionTitle.includes('screen') || sessionTitle.includes('navigation') ||
-        sessionTitle.includes('react native') || sessionTitle.includes('expo')) {
+        sessionTitle.includes('flutter') || sessionTitle.includes('expo')) {
       return this.mobileExecutor
     }
 

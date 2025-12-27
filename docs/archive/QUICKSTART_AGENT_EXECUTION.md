@@ -711,7 +711,7 @@ What would you like to do?
 
 For projects with mobile apps, here's what a mobile session looks like:
 
-### Session 9: Post List Screen (React Native)
+### Session 9: Post List Screen (Flutter)
 
 ```bash
 /execute-session my-blog 9
@@ -730,7 +730,7 @@ For projects with mobile apps, here's what a mobile session looks like:
 I will now:
 1. Write tests for PostListScreen component
 2. Test rendering, navigation, loading states
-3. Use Jest + React Native Testing Library
+3. Use Jest + Flutter Testing Library
 
 Estimated time: ~45 minutes (RED phase)
 
@@ -792,11 +792,11 @@ What would you like to do?
 #### GREEN Phase - Implementation
 
 ```
-🟢 GREEN PHASE - Implementing React Native screens...
+🟢 GREEN PHASE - Implementing Flutter screens...
 
 [Agent launches mobile-builder]
 [Agent reads failing tests]
-[Agent implements screens with React Native Paper]
+[Agent implements screens with Flutter Paper]
 [Agent sets up navigation with React Navigation]
 [Agent runs tests - they all PASS]
 [Agent measures coverage]
@@ -860,9 +860,9 @@ Coverage: 88%
 Time: 1.8h (estimated: 2h)
 
 Mobile stack:
-- React Native + Expo
+- Flutter + Expo
 - TypeScript strict mode
-- Jest + React Native Testing Library
+- Jest + Flutter Testing Library
 - React Navigation
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
@@ -1264,12 +1264,12 @@ After completing all sessions:
 
 ## Key Differences: Session Types Comparison
 
-| Aspect | Backend (Django) | Frontend (Vue) | Mobile (React Native) | E2E (Playwright) |
+| Aspect | Backend (Django) | Frontend (Vue) | Mobile (Flutter) | E2E (Playwright) |
 |--------|------------------|----------------|----------------------|------------------|
-| **Test Framework** | pytest + Django Test Utils | Vitest + Vue Test Utils | Jest + React Native Testing Library | Playwright |
+| **Test Framework** | pytest + Django Test Utils | Vitest + Vue Test Utils | Jest + Flutter Testing Library | Playwright |
 | **Coverage Target** | 90% | 85% | 85% | N/A (workflow validation) |
 | **Key Tests** | Models, Serializers, ViewSets, Permissions | Components, Composables, Views, Schemas | Screens, Components, Hooks, Navigation | Complete user workflows, Integration |
-| **Tech Stack** | Django, DRF, PostgreSQL | Vue 3, TypeScript, Shadcn-vue, TanStack Query | React Native, Expo, React Navigation, React Native Paper | Playwright, Real browser, Real database |
+| **Tech Stack** | Django, DRF, PostgreSQL | Vue 3, TypeScript, Shadcn-vue, TanStack Query | Flutter, Expo, React Navigation, Flutter Paper | Playwright, Real browser, Real database |
 | **Validation** | Django validators | Zod schemas | TypeScript types + prop validation | End-to-end flow validation |
 | **Type Safety** | Type hints + mypy | TypeScript strict mode (no `any`) | TypeScript strict mode (no `any`) | TypeScript for test code |
 | **Common Patterns** | select_related, prefetch_related | Vue Query caching, optimistic updates | FlatList optimization, Platform.select | Page object models, test helpers |

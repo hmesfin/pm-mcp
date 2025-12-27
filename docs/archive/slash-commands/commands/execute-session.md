@@ -126,7 +126,7 @@ function determineExecutorType(phase: Phase, session: Session): 'backend' | 'fro
 
   // Mobile detection
   if (sessionTitle.includes('screen') || sessionTitle.includes('navigation') ||
-      sessionTitle.includes('react native') || sessionTitle.includes('expo')) {
+      sessionTitle.includes('flutter') || sessionTitle.includes('expo')) {
     return 'mobile'
   }
 

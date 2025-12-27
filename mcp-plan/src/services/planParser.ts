@@ -123,7 +123,7 @@ function determineDomain(title: string): "backend" | "frontend" | "mobile" | "e2
   if (lowerTitle.includes("frontend") || lowerTitle.includes("ui") || lowerTitle.includes("component")) {
     return "frontend";
   }
-  if (lowerTitle.includes("mobile") || lowerTitle.includes("react native")) {
+  if (lowerTitle.includes("mobile") || lowerTitle.includes("flutter")) {
     return "mobile";
   }
   if (lowerTitle.includes("e2e") || lowerTitle.includes("integration") || lowerTitle.includes("testing")) {

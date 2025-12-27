@@ -1,7 +1,7 @@
 /**
  * Mobile Builder Executor
  *
- * Implements the SessionExecutor interface for React Native mobile app sessions.
+ * Implements the SessionExecutor interface for Flutter mobile app sessions.
  * Launches mobile-builder agent via Task tool and coordinates mobile TDD workflow.
  *
  * @see execution-orchestrator.ts for SessionExecutor interface
@@ -21,7 +21,7 @@ export class MobileExecutor implements SessionExecutor {
    *
    * Launches mobile-builder agent with instructions to:
    * 1. Read session objectives from PROJECT_PLAN.md
-   * 2. Write comprehensive React Native tests (Jest + Testing Library)
+   * 2. Write comprehensive Flutter tests (Jest + Testing Library)
    * 3. Run tests (should FAIL - implementation doesn't exist yet)
    */
   async executeRedPhase(
@@ -60,7 +60,7 @@ export class MobileExecutor implements SessionExecutor {
    * Execute GREEN phase: Implement mobile screens/components
    *
    * Launches mobile-builder agent with instructions to:
-   * 1. Implement screens using React Native Paper components
+   * 1. Implement screens using Flutter Paper components
    * 2. Set up navigation with React Navigation
    * 3. Handle platform-specific code (iOS vs Android)
    * 4. Run tests and verify they PASS
@@ -174,7 +174,7 @@ You are executing **Session ${session.number}: ${session.title}** for the **${st
 
 ## Your Mission
 
-Write comprehensive React Native tests FIRST, following TDD principles.
+Write comprehensive Flutter tests FIRST, following TDD principles.
 
 ## Context
 
@@ -209,8 +209,8 @@ ${this.getTestGuidanceForSession(session.title)}
 
 ### 3. Test Framework
 
-- **Test Runner**: Jest (built into React Native)
-- **Component Testing**: React Native Testing Library
+- **Test Runner**: Jest (built into Flutter)
+- **Component Testing**: Flutter Testing Library
 - **Mocking**: \`jest.mock()\` for API calls
 - **Coverage Target**: Minimum 85%
 
@@ -220,7 +220,7 @@ ${this.getTestGuidanceForSession(session.title)}
 
 \`\`\`typescript
 // mobile/src/screens/PostListScreen.test.tsx
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native'
+import { render, screen, fireEvent, waitFor } from '@testing-library/flutter'
 import { PostListScreen } from './PostListScreen'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -299,7 +299,7 @@ describe('PostListScreen', () => {
 
 \`\`\`typescript
 // mobile/src/components/PostCard.test.tsx
-import { render, screen, fireEvent } from '@testing-library/react-native'
+import { render, screen, fireEvent } from '@testing-library/flutter'
 import { PostCard } from './PostCard'
 
 describe('PostCard', () => {
@@ -342,7 +342,7 @@ describe('PostCard', () => {
 
 \`\`\`typescript
 // mobile/src/hooks/usePosts.test.ts
-import { renderHook, waitFor } from '@testing-library/react-native'
+import { renderHook, waitFor } from '@testing-library/flutter'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { usePosts } from './usePosts'
 import * as api from '@/api'
@@ -474,8 +474,8 @@ ${this.getImplementationGuidanceForSession(session.title)}
 \`\`\`typescript
 // mobile/src/screens/PostListScreen.tsx
 import React from 'react'
-import { FlatList, StyleSheet, View } from 'react-native'
-import { ActivityIndicator, Card, Text } from 'react-native-paper'
+import { FlatList, StyleSheet, View } from 'flutter'
+import { ActivityIndicator, Card, Text } from 'flutter-paper'
 import { usePosts } from '@/hooks/usePosts'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
@@ -545,8 +545,8 @@ const styles = StyleSheet.create({
 \`\`\`typescript
 // mobile/src/components/PostCard.tsx
 import React from 'react'
-import { StyleSheet } from 'react-native'
-import { Card, Text, Badge } from 'react-native-paper'
+import { StyleSheet } from 'flutter'
+import { Card, Text, Badge } from 'flutter-paper'
 import type { Post } from '@/types'
 
 interface PostCardProps {
@@ -693,7 +693,7 @@ Report back:
 
 ## Important Notes
 
-- **DO** use React Native Paper components for UI
+- **DO** use Flutter Paper components for UI
 - **DO** handle loading and error states
 - **DO** use TypeScript strict mode
 - **DO** add \`testID\` to all interactive elements
@@ -737,8 +737,8 @@ Extract platform-specific code:
 
 \`\`\`typescript
 // mobile/src/components/PlatformButton.tsx
-import { Platform, StyleSheet } from 'react-native'
-import { Button } from 'react-native-paper'
+import { Platform, StyleSheet } from 'flutter'
+import { Button } from 'flutter-paper'
 
 interface PlatformButtonProps {
   title: string
@@ -837,7 +837,7 @@ export const PostCard = memo(function PostCard({ post, onPress }: PostCardProps)
 
 \`\`\`typescript
 // mobile/src/utils/platform.ts
-import { Platform, StyleSheet } from 'react-native'
+import { Platform, StyleSheet } from 'flutter'
 
 export function getPlatformElevation(level: number) {
   return Platform.select({
@@ -917,7 +917,7 @@ Polish that mobile code to perfection! ✨
 
     if (title.includes('setup') || title.includes('navigation')) {
       return `**Session Type**: Mobile Setup
-- Set up React Native project structure
+- Set up Flutter project structure
 - Configure navigation (React Navigation)
 - Set up API client
 - Create shared components`
@@ -926,7 +926,7 @@ Polish that mobile code to perfection! ✨
     if (title.includes('screen') || title.includes('auth') || title.includes('home')) {
       return `**Session Type**: Screen Implementation
 - Implement mobile screens (Auth, Home, Detail, etc.)
-- Use React Native Paper components
+- Use Flutter Paper components
 - Implement navigation flow
 - Handle platform-specific code (iOS vs Android)`
     }
@@ -1013,7 +1013,7 @@ Read PROJECT_PLAN.md Session ${sessionTitle} for objectives.`
     if (title.includes('screen')) {
       return `Implement:
 - Screen components using functional components
-- React Native Paper components for UI
+- Flutter Paper components for UI
 - Navigation integration
 - Loading and error states
 - Data fetching with TanStack Query`
@@ -1035,7 +1035,7 @@ Read PROJECT_PLAN.md Session ${sessionTitle} for objectives.`
 - Loading states`
     }
 
-    return `Implement mobile code following React Native best practices`
+    return `Implement mobile code following Flutter best practices`
   }
 
   /**
@@ -1070,11 +1070,11 @@ Files modified:
 ${session.files_modified.map(f => `- ${f}`).join('\n')}
 
 Mobile stack:
-- React Native + Expo
+- Flutter + Expo
 - TypeScript strict mode
-- Jest + React Native Testing Library
+- Jest + Flutter Testing Library
 - React Navigation
-- React Native Paper
+- Flutter Paper
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
