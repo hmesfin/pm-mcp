@@ -149,3 +149,80 @@ export interface Risk {
   probability: "low" | "medium" | "high";
   impact: "low" | "medium" | "high";
 }
+
+// ============================================================================
+// WEBHOOK TYPES
+// ============================================================================
+
+export type WebhookEventType =
+  | "session_started"
+  | "session_completed"
+  | "phase_completed"
+  | "session_blocked";
+
+export interface WebhookConfig {
+  id: string;
+  url: string;
+  secret?: string;  // For HMAC signature verification
+  events: WebhookEventType[];
+  enabled: boolean;
+  retryCount?: number;  // Max retries (default: 3)
+  timeoutMs?: number;   // Request timeout (default: 10000)
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface WebhookPayload {
+  id: string;           // Unique event ID
+  event: WebhookEventType;
+  timestamp: Date;
+  project: {
+    name: string;
+    owner?: string;
+    repo?: string;
+  };
+  session?: {
+    number: number;
+    title: string;
+    domain: Domain;
+    phase: number;
+    phaseName: string;
+    status: SessionStatus;
+    metrics?: TestMetrics;
+    startedAt?: Date;
+    completedAt?: Date;
+  };
+  phase?: {
+    number: number;
+    name: string;
+    completedSessions: number;
+    totalSessions: number;
+  };
+  blocker?: {
+    sessionNumber: number;
+    reason: string;
+    blockedBy?: number[];  // Session numbers blocking this one
+  };
+}
+
+export interface WebhookDelivery {
+  id: string;
+  webhookId: string;
+  payload: WebhookPayload;
+  status: "pending" | "success" | "failed";
+  attempts: number;
+  lastAttemptAt?: Date;
+  nextRetryAt?: Date;
+  responseCode?: number;
+  responseBody?: string;
+  error?: string;
+}
+
+export interface WebhookDeliveryResult {
+  success: boolean;
+  webhookId: string;
+  eventId: string;
+  statusCode?: number;
+  error?: string;
+  retryScheduled?: boolean;
+}

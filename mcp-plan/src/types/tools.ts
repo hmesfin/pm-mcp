@@ -498,3 +498,65 @@ export interface EffortEstimate {
     variance: number;    // percentage
   }[];
 }
+
+// ============================================================================
+// WEBHOOK TOOLS
+// ============================================================================
+
+import type { WebhookConfig, WebhookEventType, WebhookDelivery, WebhookDeliveryResult } from "./common.js";
+
+export interface ConfigureWebhooksParams {
+  action: "add" | "list" | "get" | "update" | "delete";
+  webhookId?: string;
+  url?: string;
+  events?: WebhookEventType[];
+  secret?: string;
+  enabled?: boolean;
+  retryCount?: number;
+  timeoutMs?: number;
+}
+
+export interface ConfigureWebhooksResult {
+  success: boolean;
+  action: ConfigureWebhooksParams["action"];
+  webhook?: WebhookConfig;
+  webhooks?: WebhookConfig[];
+  deleted?: boolean;
+  error?: string;
+}
+
+export interface TriggerWebhookParams {
+  event: WebhookEventType;
+  projectName: string;
+  owner?: string;
+  repo?: string;
+  sessionNumber?: number;
+  sessionTitle?: string;
+  sessionDomain?: Domain;
+  sessionPhase?: number;
+  sessionPhaseName?: string;
+  sessionStatus?: SessionStatus;
+  phaseNumber?: number;
+  phaseName?: string;
+  phaseCompletedSessions?: number;
+  phaseTotalSessions?: number;
+  blockerReason?: string;
+  blockedBy?: number[];
+}
+
+export interface TriggerWebhookResult {
+  success: boolean;
+  deliveries: WebhookDeliveryResult[];
+  errors?: string[];
+}
+
+export interface GetWebhookHistoryParams {
+  webhookId: string;
+  limit?: number;
+}
+
+export interface GetWebhookHistoryResult {
+  webhookId: string;
+  history: WebhookDelivery[];
+  total: number;
+}

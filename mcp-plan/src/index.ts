@@ -24,6 +24,9 @@ import { syncWithGitHub } from "./tools/github/syncWithGitHub.js";
 import { reviewArchitecture } from "./tools/intelligence/reviewArchitecture.js";
 import { estimateEffort } from "./tools/intelligence/estimateEffort.js";
 
+// Service implementations
+import { getWebhookService } from "./services/webhookService.js";
+
 // Resource implementations
 import { listResources, readResource } from "./resources/index.js";
 
@@ -424,6 +427,73 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+
+      // ========== WEBHOOK TOOLS ==========
+      {
+        name: "configureWebhooks",
+        description: "Configure webhook endpoints for project progress notifications. Supports adding, updating, listing, and deleting webhooks.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            action: {
+              type: "string",
+              enum: ["add", "list", "get", "update", "delete"],
+              description: "Action to perform on webhooks",
+            },
+            webhookId: {
+              type: "string",
+              description: "Webhook ID (required for get, update, delete)",
+            },
+            url: {
+              type: "string",
+              description: "Webhook endpoint URL (required for add)",
+            },
+            events: {
+              type: "array",
+              items: {
+                type: "string",
+                enum: ["session_started", "session_completed", "phase_completed", "session_blocked"],
+              },
+              description: "Events to subscribe to (required for add)",
+            },
+            secret: {
+              type: "string",
+              description: "Secret key for HMAC signature verification",
+            },
+            enabled: {
+              type: "boolean",
+              description: "Whether the webhook is enabled",
+            },
+            retryCount: {
+              type: "number",
+              description: "Maximum retry attempts for failed deliveries (default: 3)",
+            },
+            timeoutMs: {
+              type: "number",
+              description: "Request timeout in milliseconds (default: 10000)",
+            },
+          },
+          required: ["action"],
+        },
+      },
+      {
+        name: "getWebhookHistory",
+        description: "Get delivery history for a specific webhook",
+        inputSchema: {
+          type: "object",
+          properties: {
+            webhookId: {
+              type: "string",
+              description: "Webhook ID to get history for",
+            },
+            limit: {
+              type: "number",
+              description: "Maximum number of entries to return",
+            },
+          },
+          required: ["webhookId"],
+        },
+      },
     ],
   };
 });
@@ -560,6 +630,127 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         ],
       };
 
+    case "configureWebhooks": {
+      const webhookService = getWebhookService();
+      const { action, webhookId, url, events, secret, enabled, retryCount, timeoutMs } = toolArgs as {
+        action: string;
+        webhookId?: string;
+        url?: string;
+        events?: string[];
+        secret?: string;
+        enabled?: boolean;
+        retryCount?: number;
+        timeoutMs?: number;
+      };
+
+      let webhookResult: Record<string, unknown>;
+
+      try {
+        switch (action) {
+          case "add":
+            if (!url || !events || events.length === 0) {
+              webhookResult = { success: false, error: "URL and events are required for add action" };
+            } else {
+              const webhook = webhookService.addWebhook({
+                url,
+                events: events as ("session_started" | "session_completed" | "phase_completed" | "session_blocked")[],
+                secret,
+                enabled,
+                retryCount,
+                timeoutMs,
+              });
+              webhookResult = { success: true, action: "add", webhook };
+            }
+            break;
+          case "list":
+            webhookResult = { success: true, action: "list", webhooks: webhookService.listWebhooks() };
+            break;
+          case "get":
+            if (!webhookId) {
+              webhookResult = { success: false, error: "webhookId is required for get action" };
+            } else {
+              const webhook = webhookService.getWebhook(webhookId);
+              webhookResult = webhook
+                ? { success: true, action: "get", webhook }
+                : { success: false, error: `Webhook not found: ${webhookId}` };
+            }
+            break;
+          case "update":
+            if (!webhookId) {
+              webhookResult = { success: false, error: "webhookId is required for update action" };
+            } else {
+              const updated = webhookService.updateWebhook(webhookId, {
+                url,
+                events: events as ("session_started" | "session_completed" | "phase_completed" | "session_blocked")[] | undefined,
+                secret,
+                enabled,
+                retryCount,
+                timeoutMs,
+              });
+              webhookResult = updated
+                ? { success: true, action: "update", webhook: updated }
+                : { success: false, error: `Webhook not found: ${webhookId}` };
+            }
+            break;
+          case "delete":
+            if (!webhookId) {
+              webhookResult = { success: false, error: "webhookId is required for delete action" };
+            } else {
+              const deleted = webhookService.deleteWebhook(webhookId);
+              webhookResult = { success: deleted, action: "delete", deleted };
+            }
+            break;
+          default:
+            webhookResult = { success: false, error: `Unknown action: ${action}` };
+        }
+      } catch (error) {
+        webhookResult = { success: false, error: error instanceof Error ? error.message : String(error) };
+      }
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(webhookResult, null, 2),
+          },
+        ],
+      };
+    }
+
+    case "getWebhookHistory": {
+      const webhookService = getWebhookService();
+      const { webhookId, limit } = toolArgs as { webhookId: string; limit?: number };
+
+      if (!webhookId) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({ success: false, error: "webhookId is required" }, null, 2),
+            },
+          ],
+        };
+      }
+
+      let history = webhookService.getDeliveryHistory(webhookId);
+      if (limit && limit > 0) {
+        history = history.slice(-limit);
+      }
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              webhookId,
+              history,
+              total: history.length,
+            }, null, 2),
+          },
+        ],
+      };
+    }
+
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
@@ -615,7 +806,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("Project Planner MCP Server v1.0.0 running on stdio");
-  console.error("Tools: 11 | Resources: 4 | Prompts: 3");
+  console.error("Tools: 13 | Resources: 4 | Prompts: 3");
 }
 
 main().catch((error) => {
