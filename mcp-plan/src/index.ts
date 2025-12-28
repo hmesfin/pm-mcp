@@ -14,6 +14,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 
 // Tool implementations
+import { conductDiscovery } from "./tools/planning/conductDiscovery.js";
 import { generateProjectPlan } from "./tools/planning/generateProjectPlan.js";
 import { analyzeRequirements } from "./tools/planning/analyzeRequirements.js";
 import { critiquePlan } from "./tools/planning/critiquePlan.js";
@@ -408,14 +409,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   switch (name) {
     case "conductDiscovery":
+      const discoveryResult = await conductDiscovery(toolArgs as unknown as Parameters<typeof conductDiscovery>[0]);
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify({
-              message: "conductDiscovery tool - implementation pending",
-              params: toolArgs,
-            }, null, 2),
+            text: JSON.stringify(discoveryResult, null, 2),
           },
         ],
       };
