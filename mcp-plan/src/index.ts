@@ -26,6 +26,7 @@ import { estimateEffort } from "./tools/intelligence/estimateEffort.js";
 
 // Service implementations
 import { getWebhookService } from "./services/webhookService.js";
+import { getCICDService } from "./services/cicdService.js";
 
 // Resource implementations
 import { listResources, readResource } from "./resources/index.js";
@@ -494,6 +495,99 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["webhookId"],
         },
       },
+
+      // ========== CI/CD INTEGRATION TOOLS ==========
+      {
+        name: "onPRMerged",
+        description: "Handle PR merge event to auto-update session status. Links PR to session via branch name, title, or body, then marks session as completed.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            owner: {
+              type: "string",
+              description: "Repository owner",
+            },
+            repo: {
+              type: "string",
+              description: "Repository name",
+            },
+            prNumber: {
+              type: "number",
+              description: "Pull request number",
+            },
+            branch: {
+              type: "string",
+              description: "Branch name (e.g., session-5, feature/session-3)",
+            },
+            title: {
+              type: "string",
+              description: "Pull request title",
+            },
+            body: {
+              type: "string",
+              description: "Pull request body/description",
+            },
+            mergedBy: {
+              type: "string",
+              description: "Username who merged the PR",
+            },
+            mergedAt: {
+              type: "string",
+              description: "ISO timestamp when PR was merged",
+            },
+            targetStatus: {
+              type: "string",
+              enum: ["completed", "awaiting_approval"],
+              description: "Status to set (default: completed)",
+            },
+          },
+          required: ["owner", "repo", "prNumber", "branch", "title", "mergedBy", "mergedAt"],
+        },
+      },
+      {
+        name: "linkPRToSession",
+        description: "Extract session number from PR branch name, title, or body without updating status. Useful for validation.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            prNumber: {
+              type: "number",
+              description: "Pull request number",
+            },
+            branch: {
+              type: "string",
+              description: "Branch name",
+            },
+            title: {
+              type: "string",
+              description: "Pull request title",
+            },
+            body: {
+              type: "string",
+              description: "Pull request body/description",
+            },
+          },
+          required: ["prNumber", "branch", "title"],
+        },
+      },
+      {
+        name: "generateCICDWorkflow",
+        description: "Generate a GitHub Actions workflow YAML for automatic session tracking on PR events",
+        inputSchema: {
+          type: "object",
+          properties: {
+            workflowName: {
+              type: "string",
+              description: "Name for the workflow (default: Session Status Tracker)",
+            },
+            branches: {
+              type: "array",
+              items: { type: "string" },
+              description: "Target branches to trigger on (default: [main])",
+            },
+          },
+        },
+      },
     ],
   };
 });
@@ -751,6 +845,86 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
 
+    case "onPRMerged": {
+      const cicdService = getCICDService();
+      const { owner, repo, prNumber, branch, title, body, mergedBy, mergedAt, targetStatus } = toolArgs as {
+        owner: string;
+        repo: string;
+        prNumber: number;
+        branch: string;
+        title: string;
+        body?: string;
+        mergedBy: string;
+        mergedAt: string;
+        targetStatus?: "completed" | "awaiting_approval";
+      };
+
+      const result = await cicdService.onPRMerged({
+        owner,
+        repo,
+        prNumber,
+        branch,
+        title,
+        body,
+        mergedBy,
+        mergedAt: new Date(mergedAt),
+        targetStatus,
+      });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    case "linkPRToSession": {
+      const cicdService = getCICDService();
+      const { prNumber, branch, title, body } = toolArgs as {
+        prNumber: number;
+        branch: string;
+        title: string;
+        body?: string;
+      };
+
+      const result = cicdService.linkPRToSession({ prNumber, branch, title, body });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    case "generateCICDWorkflow": {
+      const cicdService = getCICDService();
+      const { workflowName, branches } = toolArgs as {
+        workflowName?: string;
+        branches?: string[];
+      };
+
+      const workflow = cicdService.generateGitHubActionsWorkflow({ workflowName, branches });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              workflow,
+              filename: '.github/workflows/session-tracker.yml',
+              instructions: 'Save this file to your repository to enable automatic session tracking on PR events.',
+            }, null, 2),
+          },
+        ],
+      };
+    }
+
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
@@ -806,7 +980,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("Project Planner MCP Server v1.0.0 running on stdio");
-  console.error("Tools: 13 | Resources: 4 | Prompts: 3");
+  console.error("Tools: 16 | Resources: 4 | Prompts: 3");
 }
 
 main().catch((error) => {

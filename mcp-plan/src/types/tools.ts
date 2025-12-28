@@ -560,3 +560,53 @@ export interface GetWebhookHistoryResult {
   history: WebhookDelivery[];
   total: number;
 }
+
+// ============================================================================
+// CI/CD INTEGRATION TOOLS
+// ============================================================================
+
+export interface OnPRMergedParams {
+  owner: string;
+  repo: string;
+  prNumber: number;
+  branch: string;
+  title: string;
+  body?: string;
+  mergedBy: string;
+  mergedAt: string;
+  targetStatus?: SessionStatus;
+}
+
+export interface OnPRMergedResult {
+  processed: boolean;
+  sessionNumber?: number;
+  issueNumber?: number;
+  newStatus?: SessionStatus;
+  labelsToAdd?: string[];
+  labelsToRemove?: string[];
+  comment?: string;
+  reason?: string;
+}
+
+export interface LinkPRToSessionParams {
+  prNumber: number;
+  branch: string;
+  title: string;
+  body?: string;
+}
+
+export interface LinkPRToSessionResult {
+  found: boolean;
+  sessionNumber?: number;
+  source?: "branch" | "title" | "body";
+}
+
+export interface GenerateWorkflowParams {
+  workflowName?: string;
+  branches?: string[];
+}
+
+export interface GenerateWorkflowResult {
+  workflow: string;
+  filename: string;
+}
