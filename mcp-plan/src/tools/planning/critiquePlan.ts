@@ -20,6 +20,7 @@ import type {
   ParallelizationOpportunity,
 } from '../../types/tools.js';
 import type { Risk } from '../../types/common.js';
+import { generateDependencyDiagram } from './generateDependencyDiagram.js';
 
 interface ParsedSession {
   number: number;
@@ -40,7 +41,7 @@ interface ParsedSession {
 export async function critiquePlan(
   params: CritiquePlanParams
 ): Promise<PlanCritique> {
-  const { planPath } = params;
+  const { planPath, includeDiagram = false, diagramOptions = {} } = params;
 
   // Read the plan file
   const content = await fs.readFile(planPath, 'utf-8');
@@ -80,6 +81,22 @@ export async function critiquePlan(
     sessionCritiques
   );
 
+  // Generate diagram if requested
+  let diagram: PlanCritique['diagram'];
+  if (includeDiagram && sessions.length > 0) {
+    const diagramResult = generateDependencyDiagram(sessions, {
+      direction: diagramOptions.direction || 'TB',
+      highlightCriticalPath: diagramOptions.highlightCriticalPath ?? true,
+      showParallelGroups: diagramOptions.showParallelGroups ?? false,
+      colorByDomain: diagramOptions.colorByDomain ?? true,
+      wrapInCodeBlock: true,
+    });
+    diagram = {
+      mermaid: diagramResult.mermaid,
+      criticalPath: diagramResult.criticalPath,
+    };
+  }
+
   return {
     overall,
     sessions: sessionCritiques,
@@ -87,6 +104,7 @@ export async function critiquePlan(
     parallelization,
     risks,
     recommendations,
+    diagram,
   };
 }
 

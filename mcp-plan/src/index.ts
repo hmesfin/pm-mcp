@@ -142,6 +142,33 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: "string",
               description: "Path to PROJECT_PLAN.md file",
             },
+            includeDiagram: {
+              type: "boolean",
+              description: "Generate Mermaid.js dependency diagram (default: false)",
+            },
+            diagramOptions: {
+              type: "object",
+              description: "Options for diagram generation",
+              properties: {
+                direction: {
+                  type: "string",
+                  enum: ["TB", "BT", "LR", "RL"],
+                  description: "Diagram direction: TB (top-bottom), LR (left-right), etc.",
+                },
+                highlightCriticalPath: {
+                  type: "boolean",
+                  description: "Highlight the critical path (default: true)",
+                },
+                showParallelGroups: {
+                  type: "boolean",
+                  description: "Group parallel sessions in subgraphs (default: false)",
+                },
+                colorByDomain: {
+                  type: "boolean",
+                  description: "Color nodes by domain (default: true)",
+                },
+              },
+            },
           },
           required: ["planPath"],
         },

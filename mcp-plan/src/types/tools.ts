@@ -120,6 +120,13 @@ export interface GenerateProjectPlanResult {
 
 export interface CritiquePlanParams {
   planPath: string;  // Path to PROJECT_PLAN.md
+  includeDiagram?: boolean;  // Generate Mermaid dependency diagram
+  diagramOptions?: {
+    direction?: 'TB' | 'BT' | 'LR' | 'RL';
+    highlightCriticalPath?: boolean;
+    showParallelGroups?: boolean;
+    colorByDomain?: boolean;
+  };
 }
 
 export interface PlanCritique {
@@ -140,6 +147,10 @@ export interface PlanCritique {
   };
   risks: Risk[];
   recommendations: string[];
+  diagram?: {
+    mermaid: string;
+    criticalPath: number[];
+  };
 }
 
 export interface SessionCritique {
