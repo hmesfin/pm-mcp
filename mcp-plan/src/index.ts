@@ -37,7 +37,7 @@ import { listPrompts, getPrompt } from "./prompts/index.js";
 const server = new Server(
   {
     name: "project-planner",
-    version: "1.0.0",
+    version: "1.2.0",
   },
   {
     capabilities: {
@@ -979,7 +979,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Project Planner MCP Server v1.0.0 running on stdio");
+  console.error("Project Planner MCP Server v1.2.0 running on stdio");
   console.error("Tools: 16 | Resources: 4 | Prompts: 3");
 }
 
